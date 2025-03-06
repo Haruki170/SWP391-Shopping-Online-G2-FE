@@ -359,9 +359,9 @@ function OrderDetails({ data }) {
               <Typography>
                 Phí vận chuyển: {formatCurrency(data.shipCost)}
               </Typography>
-              <Typography> Giảm giá: {formatCurrency(0)}</Typography>
+              <Typography> Giảm giá: {formatCurrency(data.discount)}</Typography>
               <Typography variant="h6">
-                Tổng tiền phải thanh toán: {formatCurrency(data.orderTotal)}
+                Tổng tiền phải thanh toán: {formatCurrency(data.orderTotal+data.shipCost-data.discount)}
               </Typography>
             </Stack>
           </Stack>

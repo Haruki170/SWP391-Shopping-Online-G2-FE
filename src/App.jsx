@@ -96,6 +96,8 @@ import Response from "./module/client-module/response/Response";
 import OrderHistoryCancel from "./module/client-module/historyOrder/OrderHisrotyFail";
 import Messager from "./module/client-module/message/Messger";
 import MessagerShop from "./module/seller-module/message/Messger";
+import BannerManager from "./module/admin-module/banner/BannerManager";
+import BlogManagement from "./module/seller-module/Blog/BlogManagement";
 
 
 
@@ -219,6 +221,7 @@ function App() {
           <Route path="transaction" element={<Transaction />}></Route>
           <Route path="response" element={<ShopResponse></ShopResponse>}></Route>
           <Route path="chat" element={<MessagerShop></MessagerShop>}></Route>
+          <Route path="blog" element={<BlogManagement></BlogManagement>}></Route>
           <Route
             path="view-order/:id"
             element={<OrderDetails></OrderDetails>}
@@ -243,6 +246,7 @@ function App() {
           <Route path="admins" element={<AdminsManager />} />
           <Route path="shop-register" element={<ShopRegisterAdmin />} />
           <Route path="category/all" element={<CategoryManagement />} />
+          <Route path="banner" element={<BannerManager />} />
           <Route path="change-password" element={< ChangePasswordAdmin /> } />
           <Route path="shop" element={<ManageShop></ManageShop>}></Route>
 

@@ -29,7 +29,7 @@ const Row = ({ row }) => {
     });
   };
 
-  console.log(row);
+  console.log("row",row);
   
 
   
@@ -46,7 +46,7 @@ const Row = ({ row }) => {
           </IconButton>
         </TableCell>
         <TableCell>{row.order.code}</TableCell>
-        <TableCell>{formatCurrency(row.order.orderTotal)}</TableCell>
+        <TableCell>{formatCurrency(row.order.orderTotal-row.order.amount)}</TableCell>
         <TableCell>{formatCurrency(row.sipAmount)}</TableCell>
         <TableCell sx={{ color: row.status == 1 ? "green" : "red" }}>
           {row.status == 1 ? "+" : "-"} {formatCurrency(row.amount)}

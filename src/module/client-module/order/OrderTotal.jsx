@@ -13,7 +13,9 @@ import { Form } from "react-bootstrap";
 import PaymentIcon from "@mui/icons-material/Payment";
 import SummarizeOutlinedIcon from "@mui/icons-material/SummarizeOutlined";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 const OrderTotal = ({ address, orderData, orderVnPay }) => {
+  const selectedVoucher = useSelector((state) => state.voucher.selectedVoucher);
   const [show, setShow] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState(0);
   const handleClose = () => setShow(false);
@@ -37,7 +39,9 @@ const OrderTotal = ({ address, orderData, orderVnPay }) => {
     const orderItem = item.orderList;
     return (total += item.totalCost);
   }, 0);
-
+  const totalWithDiscount = selectedVoucher
+  ? totalOrder + totalShipCost - selectedVoucher.discountAmount
+  : totalOrder + totalShipCost;
   const formatCurrency = (value) => {
     return value.toLocaleString("vi-VN", {
       style: "currency",
@@ -82,14 +86,16 @@ const OrderTotal = ({ address, orderData, orderVnPay }) => {
               <h6>{formatCurrency(totalShipCost)}</h6>
             </Stack>
 
-            <Stack
-              direction={"row"}
-              sx={{ justifyContent: "space-between", alignItems: "center" }}
-            >
-              <p className="total-title">Tổng đơn hàng</p>
-              <h6 className="total-price">
-                {formatCurrency(totalOrder + totalShipCost)}
-              </h6>
+            {selectedVoucher && (
+                            <Stack direction={"row"} sx={{ justifyContent: "space-between", alignItems: "center" }}>
+                                <p className="total-item-title">Giảm giá ({selectedVoucher.code})</p>
+                                <h6>- {formatCurrency(selectedVoucher.discountAmount)}</h6>
+                            </Stack>
+                        )}
+
+                        <Stack direction={"row"} sx={{ justifyContent: "space-between", alignItems: "center" }}>
+                            <p className="total-title">Tổng đơn hàng</p>
+                            <h6 className="total-price">{formatCurrency(totalWithDiscount)}</h6>
             </Stack>
 
             <Button

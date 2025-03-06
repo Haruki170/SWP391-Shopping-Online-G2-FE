@@ -16,6 +16,7 @@ const Order = () => {
   const orderData = useSelector((state) => state.order.order);
   console.log(orderData)
   const login = useSelector((state) => state.auth.login);
+  const selectedVoucher = useSelector((state) => state.voucher.selectedVoucher);
   const navigate = useNavigate();
   if (!orderData || orderData.length == 0) {
     navigate("/cart");
@@ -41,14 +42,23 @@ const Order = () => {
   });
 
   const { mutate: codOrder } = useMutation({
-    mutationFn: (data) => createOrderCod(data),
+    mutationFn: (data) => {
+
+  
+      const updatedData = {
+        ...data,
+      };
+  
+      return createOrderCod(updatedData);
+    },
     onSuccess: (data) => {
       window.location.href = data;
     },
-    onError: (data) => {
+    onError: () => {
       window.location.href = "http://localhost:5173/payment-err";
     },
   });
+  
 
 
 
@@ -62,7 +72,7 @@ const Order = () => {
       let data = {
         address,
         orders: orderData,
-        
+        discountAmount: selectedVoucher.discountAmount || 0,
       };
       
       

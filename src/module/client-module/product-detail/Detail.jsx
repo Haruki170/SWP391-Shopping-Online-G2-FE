@@ -678,13 +678,16 @@ const Detail = () => {
                         Xem Shop
                       </Button>
                       <Button
+                        onClick={() => setChat(product.shop)}
                         variant="text"
                         sx={{
                           textTransform: "none",
                           color: "#ffc107",
                           fontWeight: "bold",
                         }}
-                        startIcon={<ChatBubbleOutlineIcon style={{ color: "#ffc107" }} />}
+                        startIcon={<ChatBubbleOutlineIcon style={{ color: "#ffc107" }} 
+                        
+                        />}
                       >
                         Trò chuyện
                       </Button>

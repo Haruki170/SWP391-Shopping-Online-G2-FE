@@ -9,8 +9,11 @@ const OrderDetail = ({ orderData }) => {
       currency: "VND",
     });
   };
-
- 
+  const totalOrder = orderData.reduce((total, item) => {
+    const orderItem = item.orderList;
+    return (total += item.totalCost);
+  }, 0);
+  const [showVoucherModal, setShowVoucherModal] = React.useState(false);
   return (
     <div id="order-detail" style={{ width: "100%" }}>
       <Box
@@ -254,8 +257,8 @@ const OrderDetail = ({ orderData }) => {
                   <p className="sub-item">Vourcher của shop</p>
                 </Stack>
 
-                <Button>Chọn vourcher</Button>
-                <VoucherModal></VoucherModal>
+                <Button onClick={() => setShowVoucherModal(true)}>Chọn Voucher</Button>
+                <VoucherModal open={showVoucherModal} onClose={() => setShowVoucherModal(false)} orderAmount={totalOrder} />
               </Stack>
 
               <Stack

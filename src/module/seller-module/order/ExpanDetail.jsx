@@ -159,7 +159,7 @@ const ExpanDetail = ({ row, refetch }) => {
                 fullWidth
                 label="Giảm giá"
                 variant="standard"
-                value={"0 ₫"}
+                value={formatCurrency(row.discount)}
               />
             </Stack>
           </Stack>

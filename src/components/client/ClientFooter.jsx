@@ -67,8 +67,6 @@ const ClientFooter = () => {
             <p>© 2024 CHUS. All rights reserved.</p>
             <img width={100} src="https://chus.vn/images/chus/logo/logo-bct.png" alt="logo-bct" className="logo-bct" />
             <p>Address: FPT University, Hoa Lac, Ha Noi</p>
-            <p>Initially issued by: Group 1</p>
-            <p>Members: Nguyễn Trung Hiếu(Leader), Nguyễn Tiến Dũng, Phùng Quốc Hưng, Hoàng Minh Đức</p>
           </Col>
         </Row>
       </footer>

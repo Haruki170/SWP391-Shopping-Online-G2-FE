@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Bar } from 'react-chartjs-2';
-import { Paper, Typography } from '@mui/material';
+import { Paper, Typography, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -14,15 +14,24 @@ import {
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const GrowthChart = ({ data }) => {
-  console.log(data);
-  
-  if (!data || data.length === 0) {
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const [filteredData, setFilteredData] = useState(data);
+
+  useEffect(() => {
+    // Lọc dữ liệu theo năm
+    const filtered = data.filter(item => {
+      const year = new Date(item.transactionDate).getFullYear();
+      return year === selectedYear;
+    });
+    setFilteredData(filtered);
+  }, [selectedYear, data]);
+
+  if (!filteredData || filteredData.length === 0) {
     return <Typography>Không có dữ liệu để hiển thị</Typography>;
   }
 
-  // Sử dụng các trường `transactionDate` và `dailyIncome` từ `data`
-  const labels = data.map(item => item.transactionDate);
-  const dailyIncome = data.map(item => item.dailyIncome);
+  const labels = filteredData.map(item => item.transactionDate);
+  const dailyIncome = filteredData.map(item => item.dailyIncome);
 
   const chartData = {
     labels: labels,
@@ -89,9 +98,25 @@ const GrowthChart = ({ data }) => {
     },
   };
 
+  const years = Array.from(new Set(data.map(item => new Date(item.transactionDate).getFullYear())));
+
   return (
     <Paper elevation={3} sx={{ p: 2 }}>
       <Typography variant="h6">Thu nhập hàng ngày</Typography>
+      
+      <FormControl fullWidth>
+        <InputLabel>Năm</InputLabel>
+        <Select
+          value={selectedYear}
+          onChange={(e) => setSelectedYear(e.target.value)}
+          label="Năm"
+        >
+          {years.map(year => (
+            <MenuItem key={year} value={year}>{year}</MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+
       <Bar data={chartData} options={options} />
     </Paper>
   );

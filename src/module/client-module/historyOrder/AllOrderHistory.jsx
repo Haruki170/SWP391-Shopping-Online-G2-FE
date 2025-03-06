@@ -84,7 +84,7 @@ const AllOrderHistory = ({ data }) => {
                     <TableCell>{order.shop.name}</TableCell>
                     <TableCell>{order.address.nameReceiver}</TableCell>
                     <TableCell>
-                      {formatCurrency(order.orderTotal + order.shipCost)}
+                      {formatCurrency(order.orderTotal + order.shipCost-order.discount)}
                     </TableCell>
                     <TableCell
                       sx={{ color: styleOrder.color, fontWeight: 700 }}

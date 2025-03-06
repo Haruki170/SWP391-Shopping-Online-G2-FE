@@ -119,7 +119,7 @@ const Row = ({ row }) => {
         <TableCell>{row.order.code}</TableCell>
         <TableCell sx={{ color: row.type == 1 ? "green" : "red" }}>
           {row.type == 1 ? "+" : "-"}{" "}
-          {formatCurrency(row.amount + row.shipCost)}
+          {formatCurrency(row.amount + row.shipCost - row.discount)}
         </TableCell>
         <TableCell>{row.create_at}</TableCell>
         {row.isPaid != 4 && (
@@ -210,7 +210,7 @@ const Row = ({ row }) => {
                               : "Số tiền quản trị đã thanh toán : "}
                           </TableCell>
                           <TableCell>
-                            {formatCurrency(row.amount + row.shipCost)}
+                            {formatCurrency(ow.amount + row.shipCost - row.discount)}
                           </TableCell>
                         </TableRow>
                       )}
@@ -220,7 +220,7 @@ const Row = ({ row }) => {
                             Số tiền cửa hàng đã than toán
                           </TableCell>
                           <TableCell>
-                            {formatCurrency(row.amount + row.shipCost)}
+                            {formatCurrency(ow.amount + row.shipCost - row.discount)}
                           </TableCell>
                         </TableRow>
                       )}

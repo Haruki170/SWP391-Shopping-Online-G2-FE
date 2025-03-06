@@ -12,7 +12,9 @@ import {
   Grid,
   Card,
   CardContent,
-  CardMedia
+  CardMedia,
+  Modal,
+  Fade
 } from "@mui/material";
 import StarIcon from "@mui/icons-material/Star";
 import LocalMallIcon from "@mui/icons-material/LocalMall";
@@ -22,22 +24,28 @@ import parse from "html-react-parser";
 import { useParams } from "react-router-dom";
 import { fetch } from "../../../api/Fetch";
 import { useQuery } from "@tanstack/react-query";
-
+import Backdrop from "@mui/material/Backdrop";
 export const ShopDetail = () => {
   const { id } = useParams();
   const [shopInfo, setShopInfo] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [showFullDesc, setShowFullDesc] = useState(false); // State để kiểm soát xem hiển thị đầy đủ mô tả
   const productsPerPage = 6;
-
-  
+  const [blogs, setBlogs] = useState([]);
+  const [selectedBlog, setSelectedBlog] = useState(null);
 
   const getDetail = async (id) =>{
       let data = await fetch.get("/shop/detail-customer/"+id)
       return data.data 
   }
-
-
+    const getBlogs = async (shopId) => {
+      let data = await fetch.get(`/blog/${shopId}`);
+      return data.data;
+    };
+    const { data: blogData } = useQuery({
+      queryKey: ['shop-blogs', id],
+      queryFn: () => getBlogs(id)
+    });
 
   const {data} = useQuery({
     queryKey:['c-detail'],
@@ -48,8 +56,9 @@ export const ShopDetail = () => {
   useEffect(() => {
     if(data){
       setShopInfo(data)
+      if (blogData) setBlogs(blogData);
     }
-  }, [data]);
+  }, [data,blogData]);
   const fetchData = async () => {
     try {
       const response = await fetch.get(`/shop/detail-customer/${id}`);
@@ -67,7 +76,13 @@ export const ShopDetail = () => {
   };
 
   console.log(data);
-  
+  const handleOpenBlog = (blog) => {
+    setSelectedBlog(blog);
+  };
+
+  const handleCloseBlog = () => {
+    setSelectedBlog(null);
+  };
 
   if (!shopInfo) {
     return <Typography variant="h6" align="center">Loading...</Typography>;
@@ -247,6 +262,71 @@ export const ShopDetail = () => {
           color="primary"
         />
       </Box>
+      <Box sx={{ p: 4, backgroundColor: "#f9f9f9" }}>
+      {/* Existing Shop Details */}
+      <Divider sx={{ mt: 4, mb: 4 }} />
+
+      {/* Blog Section */}
+      <Typography variant="h5" fontWeight="bold" sx={{ mt: 4, mb: 2, textAlign: "center" }}>
+        Blog của cửa hàng
+      </Typography>
+      <Grid container spacing={2} justifyContent="center" sx={{ maxWidth: "1200px", mx: "auto" }}>
+        {blogs.length > 0 ? (
+          blogs.map((blog) => (
+            <Grid item xs={12} sm={6} md={4} key={blog.id}>
+              <Card
+                sx={{
+                  boxShadow: 3,
+                  borderRadius: "8px",
+                  cursor: "pointer",
+                  transition: "transform 0.2s",
+                  "&:hover": { transform: "scale(1.05)" }
+                }}
+                onClick={() => handleOpenBlog(blog)}
+              >
+                <CardContent>
+                  <Typography variant="h6" fontWeight="bold">
+                    {blog.title}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Ngày đăng: {blog.createdDate.join("-")}
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+          ))
+        ) : (
+          <Typography variant="body2" color="text.secondary" align="center">
+            Không có bài blog nào
+          </Typography>
+        )}
+      </Grid>
+
+      {/* Blog Modal */}
+      <Modal
+        open={!!selectedBlog}
+        onClose={handleCloseBlog}
+        closeAfterTransition
+        sx={{
+          zIndex: (theme) => theme.zIndex.modal + 1,
+        }}
+      >
+        <Fade in={!!selectedBlog}>
+          <Box sx={{ p: 4, backgroundColor: "#fff", maxWidth: 800, mx: "auto", mt: 5, borderRadius: 2, boxShadow: 3 }}>
+            <Typography variant="h4" fontWeight="bold" sx={{ mb: 2 }}>
+              {selectedBlog?.title}
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+              Ngày đăng: {selectedBlog?.createdDate.join("-")}
+            </Typography>
+            <Typography variant="body1">{selectedBlog?.content}</Typography>
+            <Button onClick={handleCloseBlog} sx={{ mt: 3 }} variant="contained" color="primary">
+              Đóng
+            </Button>
+          </Box>
+        </Fade>
+      </Modal>
+    </Box>
     </Box>
   );
 };

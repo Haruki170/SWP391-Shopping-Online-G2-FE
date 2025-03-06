@@ -23,7 +23,7 @@ import { savePayForAdmin } from "../../../api/transactionApi";
 
 const Row = ({ row }) => {
   const [open, setOpen] = useState(false);
-
+  console.log("row",row)
   const formatCurrency = (value) => {
     return value.toLocaleString("vi-VN", {
       style: "currency",

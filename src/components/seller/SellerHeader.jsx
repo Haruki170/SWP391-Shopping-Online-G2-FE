@@ -20,6 +20,8 @@ import { Stack } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { LOGOUT } from "../../redux/slice/AuthSlice";
 import UndoIcon from '@mui/icons-material/Undo';
+import ChatIcon from '@mui/icons-material/Chat';
+import PostAddIcon from '@mui/icons-material/PostAdd';
 const SellerHeader = ({ shop }) => {
   const [auth, setAuth] = React.useState(true);
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -175,6 +177,16 @@ const SellerHeader = ({ shop }) => {
               to="/seller/voucher"
             >
               <SellIcon sx={{marginRight:"5px"}} /> Voucher
+            </NavLink>
+            <NavLink
+              to="/seller/chat"
+            >
+              <ChatIcon sx={{marginRight:"5px"}} /> Chat
+            </NavLink>
+            <NavLink
+              to="/seller/blog"
+            >
+              <PostAddIcon sx={{marginRight:"5px"}} /> Blog
             </NavLink>
           </Toolbar>
         </AppBar>

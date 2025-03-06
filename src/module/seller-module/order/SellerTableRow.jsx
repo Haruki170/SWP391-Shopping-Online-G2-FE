@@ -61,7 +61,7 @@ const SellerTableRow = ({ row,refetch }) => {
         </TableCell>
         <TableCell>{row.code}</TableCell>
         <TableCell>{row.customer.email}</TableCell>
-        <TableCell>{formatCurrency(row.orderTotal + row.shipCost)}</TableCell>
+        <TableCell>{formatCurrency(row.orderTotal + row.shipCost - row.discount)}</TableCell>
         <TableCell>{row.create_at}</TableCell>
         <TableCell sx={{ color: stylePayment.color, fontWeight: "700" }}>
           {stylePayment.text}

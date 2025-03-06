@@ -146,6 +146,11 @@ function NavSide() {
                 <Link to={"/admin/category/all"}><li>Quản lý danh mục</li></Link>
               </ul>
             </Collapse>
+            <Collapse in={openCategoryManagement} timeout="auto" unmountOnExit>
+              <ul className="nav-item-ul">
+                <Link to={"/admin/banner"}><li>Quản lý Banner</li></Link>
+              </ul>
+            </Collapse>
           </li>
 
           {/* Đơn đăng ký bán hàng */}
