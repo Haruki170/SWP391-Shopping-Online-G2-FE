@@ -502,7 +502,7 @@ const Cart = () => {
                     }}
                     mt={2}
                   >
-                    Mỗi sản phẩm trên CHUS được chuẩn bị và gửi đi từ các nhà
+                    Mỗi sản phẩm trên 6MEMs được chuẩn bị và gửi đi từ các nhà
                     cung cấp ở nhiều địa điểm khác nhau. Bạn có thể thấy phí
                     giao hàng được áp dụng ở trang tiếp theo.
                   </Typography>

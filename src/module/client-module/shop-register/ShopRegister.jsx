@@ -123,17 +123,17 @@ const ShopRegister = () => {
         />
       </div>
       <div className="shop-register-body">
-        <h5>Bạn muốn mở gian hàng trên Chus?</h5>
+        <h5>Bạn muốn mở gian hàng trên 6MEMs?</h5>
         <ul>
           <li>
-            Xin chào! Chúng mình là Chus - trang thương mại điện tử tại Việt Nam
+            Xin chào! Chúng mình là 6MEMs - trang thương mại điện tử tại Việt Nam
             chuyên sản phẩm thủ công độc đáo, đậm chất riêng, giàu chất Việt và
-            không kém phần chất lượng từ mọi miền của Tổ quốc và Chus rất hào
+            không kém phần chất lượng từ mọi miền của Tổ quốc và 6MEMs rất hào
             hứng được đồng hành cùng bạn!
           </li>
           <li>
-            <b>Đăng ký Gian hàng</b> Chus hoàn toàn miễn phí. Để đăng ký gian
-            hàng trên Chus, vui lòng điền thông tin vào biểu mẫu bên dưới. Chus
+            <b>Đăng ký Gian hàng</b> 6MEMs hoàn toàn miễn phí. Để đăng ký gian
+            hàng trên 6MEMs, vui lòng điền thông tin vào biểu mẫu bên dưới. 6MEMs
             sẽ thông báo kết quả và gửi về mail cho các bạn sau vài ngày làm
             việc.
           </li>

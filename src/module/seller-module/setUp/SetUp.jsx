@@ -498,14 +498,14 @@ const validate = () => {
             </div>
 
             <div className="shop-setup-body mt-3">
-              <h5>Chúc mừng bạn đã đăng ký bán hàng thành công trên Chus</h5>
+              <h5>Chúc mừng bạn đã đăng ký bán hàng thành công trên 6MEMs</h5>
               <ul>
                 <li>
-                  Xin chào! Chúng mình là Chus - để có thể bán hàng ,vui lòng
+                  Xin chào! Chúng mình là 6MEMs - để có thể bán hàng ,vui lòng
                   cho chúng tôi biết thêm về cửa hàng của bạn
                 </li>
                 <li>
-                  <b> Đăng ký Gian hàng</b> Chus hoàn toàn miễn phí. Để hoàn tất
+                  <b> Đăng ký Gian hàng</b> 6MEMs hoàn toàn miễn phí. Để hoàn tất
                   việc đăng ký bạn cần cho mọi người biết thêm về shop của bạn,
                   cài đặt mức phí vận chuyển
                 </li>

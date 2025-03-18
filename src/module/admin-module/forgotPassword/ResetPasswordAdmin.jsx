@@ -101,7 +101,7 @@ const ResetPasswordAdmin = () => {
                     variant="h5"
                     sx={{ fontWeight: "bold", mb: 1 }}
                 >
-                    Welcome to Chus! 👋
+                    Welcome to 6MEMs! 👋
                 </Typography>
                 <Typography
                     variant="body2"

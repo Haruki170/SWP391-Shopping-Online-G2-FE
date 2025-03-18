@@ -12,21 +12,21 @@ const ClientFooter = () => {
             <h5>Customer Service</h5>
             <ul className="list-unstyled">
               <li><p onClick={() => window.location.href = '/help'}>Trung tâm trợ giúp</p></li>
-              <li><p onClick={() => window.location.href = '/blog'}>Bài viết Của Chus</p></li>
+              <li><p onClick={() => window.location.href = '/blog'}>Bài viết Của 6MEMs</p></li>
               <li><p onClick={() => window.location.href = '/return-refund'}>Trả lại & Hoàn tiền</p></li>
               <li><p onClick={() => window.location.href = '/contact'}>Liên hệ với chúng tôi</p></li>
             </ul>
           </Col>
 
           <Col sm={6} md={3} className="mb-4">
-            <h5>About Chus</h5>
+            <h5>About 6MEMs</h5>
             <ul className="list-unstyled">
               <li><p onClick={() => window.location.href = '/our-story'}>Về chúng tôi</p></li>
-              <li><p onClick={() => window.location.href = '/chus-policies'}>Chính sách CHUS</p></li>
+              <li><p onClick={() => window.location.href = '/chus-policies'}>Chính sách 6MEMs</p></li>
               <li><p onClick={() => window.location.href = '/privacy-policy'}>Chính sách bảo mật</p></li>
               <li><p onClick={() => window.location.href = '/payment-policy'}>Chính sách thanh toán</p></li>
               <li><p onClick={() => window.location.href = '/refund-return'}>Hoàn Tiền và Trả lại</p></li>
-              <li><p onClick={() => window.location.href = '/become-chus-artisan'}>Trở thành thành viên bán hàng cùng CHUS</p></li>
+              <li><p onClick={() => window.location.href = '/become-chus-artisan'}>Trở thành thành viên bán hàng cùng 6MEMs</p></li>
             </ul>
           </Col>
 
@@ -64,7 +64,7 @@ const ClientFooter = () => {
 
         <Row className="text-center mt-4">
           <Col>
-            <p>© 2024 CHUS. All rights reserved.</p>
+            <p>© 2024 6MEMs. All rights reserved.</p>
             <img width={100} src="https://chus.vn/images/chus/logo/logo-bct.png" alt="logo-bct" className="logo-bct" />
             <p>Address: FPT University, Hoa Lac, Ha Noi</p>
           </Col>

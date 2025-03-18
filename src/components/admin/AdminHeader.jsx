@@ -47,7 +47,7 @@ const settings = ["logout"];
           <img
                   width={150}
                   height={40}
-                  src="https://static.chus.vn/images/logos/141/logo-w.png"
+                  src="../../assets/images/logo.png"
                   alt="Logo"
                 />
 

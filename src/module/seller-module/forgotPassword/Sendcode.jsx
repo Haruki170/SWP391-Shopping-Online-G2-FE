@@ -73,7 +73,7 @@ const Sendcode = () => {
         <div id="login-seller">
             <div className="wrapper">
                 <div className="logo">
-                    <img src="https://chus.vn/images/chus/logo/logo-chus.png" alt="logo" />
+                    <img src="https://res.cloudinary.com/dzq9ac2qd/image/upload/v1742304897/logo_xrx34y.png" alt="logo" />
                 </div>
                 <div className="text-center mt-4 name">Quản lý cửa hàng</div>
 

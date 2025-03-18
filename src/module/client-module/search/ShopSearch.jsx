@@ -59,7 +59,7 @@ const ShopSearch = () => {
                       {shop.name}
                     </Typography>
                     <Typography sx={{ fontSize: "12px", color: "#868686", fontWeight: "500" }} variant="body1">
-                      Tham gia chus từ: {shop.joinDate}
+                      Tham gia 6MEMs từ: {shop.joinDate}
                     </Typography>
                   </Box>
                 </Stack>

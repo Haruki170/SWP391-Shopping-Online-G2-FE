@@ -39,7 +39,7 @@ const ProfileNav = () => {
       <ul>
         <li>
           <NavLink to={"/profile"} end>
-            Chus của tôi
+            6MEMs của tôi
           </NavLink>
         </li>
         <li className="nested-menu">

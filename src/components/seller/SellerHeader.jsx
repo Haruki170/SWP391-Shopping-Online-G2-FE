@@ -63,7 +63,7 @@ const SellerHeader = ({ shop }) => {
               <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                 <img
                   width={150}
-                  src="https://chus.vn/images/chus/logo/logo-chus.png"
+                  src="https://res.cloudinary.com/dzq9ac2qd/image/upload/v1742304897/logo_xrx34y.png"
                   alt="Logo"
                 />
               </Typography>

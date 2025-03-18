@@ -20,7 +20,7 @@ const CHUSInfo = () => {
     {
       title: "CHUS nhiều hơn nữa",
       description:
-        "Sản phẩm nhập khẩu không phải lúc nào cũng là tốt nhất. Là cầu nối vững chắc giữa người tiêu dùng và các thương hiệu địa phương, CHUS luôn cố gắng hoàn thiện mình trên từng đoạn hành trình. Không những mang đến cho bạn trải nghiệm tuyệt vời mà còn là những sản phẩm độc đáo và chất lượng nhất.",
+        "Sản phẩm nhập khẩu không phải lúc nào cũng là tốt nhất. Là cầu nối vững chắc giữa người tiêu dùng và các thương hiệu địa phương, 6MEMs luôn cố gắng hoàn thiện mình trên từng đoạn hành trình. Không những mang đến cho bạn trải nghiệm tuyệt vời mà còn là những sản phẩm độc đáo và chất lượng nhất.",
       image: "https://chus.vn/images/chus/banner/Chus_WhatIsIt3.png",
       color: "#e53935",
     },
@@ -29,7 +29,7 @@ const CHUSInfo = () => {
   return (
     <Container sx={{ marginTop: "50px" }}>
       <Typography variant="h4" align="center" gutterBottom>
-        Giới Thiệu Về CHUS
+        Giới Thiệu Về 6MEMs
       </Typography>
       <Typography variant="subtitle1" align="center" color="textSecondary" gutterBottom>
         Tìm câu chuyện của chúng tôi <a href="#link">ở đây</a>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import {
   Container,
@@ -48,7 +48,7 @@ const AdminLogin = () => {
       let response = content.data.data  
       dispatch(LOGOUT())
       dispatch(LOGIN(response))
-      navigate("/")
+      navigate("/admin")
     })
     .catch((error) => {
       if (error.response) {
@@ -57,7 +57,11 @@ const AdminLogin = () => {
     });
     // Bạn có thể thực hiện các thao tác xử lý dữ liệu tại đây, ví dụ: gửi dữ liệu đến server.
   };
-
+  useEffect(() => {
+    if (auth.login) { // Kiểm tra nếu user đã đăng nhập
+      navigate("/admin");
+    }
+  }, [auth.login,navigate]); 
   if(auth.login &&( auth.role == "admin"|| auth.role == "superAdmin")){
     return <Navigate to={"/admin"}></Navigate>
   }
@@ -81,7 +85,7 @@ const AdminLogin = () => {
           variant="h5"
           sx={{ fontWeight: "bold", mb: 1 }}
         >
-          Welcome to Chus! 👋
+          Welcome to 6MEMs! 👋
         </Typography>
         <Typography
           variant="body2"

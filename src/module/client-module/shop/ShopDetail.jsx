@@ -154,7 +154,7 @@ export const ShopDetail = () => {
           </Box>
           {shopInfo.joinedDate && (
             <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-              Tham gia chus từ: {shopInfo.joinedDate}
+              Tham gia 6MEMs từ: {shopInfo.joinedDate}
             </Typography>
           )}
           {/* Hiển thị mô tả ngắn hoặc đầy đủ */}
