@@ -17,45 +17,7 @@ const AddressModelShop = ({ show, handleClose ,addAddress}) => {
   const [error, setError] = useState(null); // State lỗi
 
   // Lấy danh sách tỉnh thành
-  useEffect(() => {
-    axios
-      .get("https://esgoo.net/api-tinhthanh/1/0.htm")
-      .then((response) => setProvince(response.data.data))
-      .catch((error) => console.error("Error fetching provinces:", error));
-  }, []);
 
-  // Lấy danh sách quận/huyện khi chọn tỉnh thành
-  useEffect(() => {
-    if (data.selectProvince) {
-      axios
-        .get(`https://esgoo.net/api-tinhthanh/2/${data.selectProvince.id}.htm`)
-        .then((response) =>
-          setData((prevData) => ({
-            ...prevData,
-            listDistrict: response.data.data,
-            selectDistrict: null,
-            listWard: [],
-          }))
-        )
-        .catch((error) => console.error("Error fetching districts:", error));
-    }
-  }, [data.selectProvince]);
-
-  // Lấy danh sách xã/phường khi chọn quận/huyện
-  useEffect(() => {
-    if (data.selectDistrict) {
-      axios
-        .get(`https://esgoo.net/api-tinhthanh/3/${data.selectDistrict.id}.htm`)
-        .then((response) =>
-          setData((prevData) => ({
-            ...prevData,
-            listWard: response.data.data,
-            selectWard: null,
-          }))
-        )
-        .catch((error) => console.error("Error fetching wards:", error));
-    }
-  }, [data.selectDistrict]);
 
   // Xử lý khi chọn tỉnh thành
   const handleSelectProvince = (e) => {
