@@ -31,6 +31,15 @@ const Row = ({ row }) => {
     });
   };
 
+  const handlePay = () => {
+    let data = {
+      id: row.id,
+      shop: row.shop,
+      order: row.order,
+      amount: row.netAmount,
+    };
+    mutate(data);
+  };
 
   const { mutate } = useMutation({
     mutationFn: (data) => savePayForAdmin(data),
