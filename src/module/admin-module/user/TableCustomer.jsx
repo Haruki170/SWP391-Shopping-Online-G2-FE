@@ -164,7 +164,20 @@ const TableCustomer = () => {
                                                     </Dialog>
                                                 </div>
                                                 
-                                                
+                                                {c.status === 0 ? (
+                                                    <Button variant="contained" color="success" onClick={() => handleChangeStatus(c.id, 1)}>
+                                                        Kích hoạt
+                                                    </Button>
+                                                ) : c.status === 1 ? ( // Thêm điều kiện cho status 1
+                                                    <Button variant="contained" color="error" onClick={() => handleChangeStatus(c.id, 2)}>
+                                                        Chặn
+                                                    </Button>
+                                                ) : c.status === 2 ? ( // Sửa lỗi cú pháp ở đây
+                                                    <Button variant="contained" color="primary" onClick={() => handleChangeStatus(c.id, 1)}>Bỏ chặn</Button>
+                                                ) : null}
+                                                <Button variant="contained" color="warning" onClick={() => handleMail(c.email)}>
+                                                        Gửi mail
+                                                    </Button>
                                             </Stack>
                                         </TableCell>
                                     </TableRow>
