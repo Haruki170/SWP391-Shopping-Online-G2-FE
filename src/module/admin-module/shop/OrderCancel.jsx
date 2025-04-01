@@ -56,29 +56,6 @@ function Row({ row }) {
   );
 }
 
-const OrderCancel = ({order}) => {
-  return (
-    <TableContainer component={Paper}>
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell />
-            <TableCell>Mã đơn</TableCell>
-            <TableCell>Tổng đơn hàng</TableCell>
-            
-            <TableCell>Ngày đặt hàng</TableCell>
-            <TableCell>Ngày gửi yêu cầu</TableCell>
-            <TableCell>Trạng thái xử lý</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {order.map((row, index) => (
-            <Row key={index} row={row} />
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
-  );
 };
 
 export default OrderCancel;
