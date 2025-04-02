@@ -13,12 +13,3 @@ export const deleteFeedbackById = async (feedbackId) => {
         return null; 
     }
 }
-export const editFeedbackById = async (feedbackId, formData) => {
-    let response = await fetch.put(`/feedback/edit/${feedbackId}`, formData);
-    return response.data; 
-};
-
-export const removeImage =async (id) => {
-    let response = await fetch.post("/feedback/remove-image/"+id)
-    return response.data;
-}
