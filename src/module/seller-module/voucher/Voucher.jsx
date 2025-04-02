@@ -278,7 +278,27 @@ const VoucherList = () => {
                         }
                         required
                     />
-                  
+                    <TextField
+                        margin="dense"
+                        label="số lượng"
+                        fullWidth
+                        value={newVoucher.quantity}
+                        onChange={(e) =>
+                            setNewVoucher({ ...newVoucher, quantity: e.target.value })
+                        }
+                        required
+                    />
+                    <TextField
+                        margin="dense"
+                        label="Description"
+                        fullWidth
+                        multiline
+                        rows={3}
+                        value={newVoucher.description}
+                        onChange={(e) =>
+                            setNewVoucher({ ...newVoucher, description: e.target.value })
+                        }
+                    />
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={() => setOpenDialog(false)}>Cancel</Button>
