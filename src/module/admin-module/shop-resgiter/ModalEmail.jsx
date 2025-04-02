@@ -60,7 +60,26 @@ const ModalEmail = ({email, show, handleClose, subject}) => {
   if(isPending){
     return <Loading></Loading>
   }
-  
+  return (
+    <Modal
+      open={show}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+    >
+      <Box sx={style}>
+        <Typography id="modal-modal-title" variant="h6" component="h2">
+          Gửi mail đến {email}
+        </Typography>
+        <Stack className="mt-3">
+          <TextField onChange={(e) => setText(e.target.value)} id="" label="Nội dung" multiline maxRows={4} minRows={3} />
+          <Stack direction={"row"} spacing={1} sx={{justifyContent:"end", mt:3}}>
+                <Button onClick={handleClose} variant="contained">Hủy</Button>
+                <Button variant="outlined" onClick={handleSubmit}>Gửi mail</Button>
+          </Stack>
+        </Stack>
+      </Box>
+    </Modal>
+  );
 };
 
 export default ModalEmail;
