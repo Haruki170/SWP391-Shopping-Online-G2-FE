@@ -79,5 +79,46 @@ export default function SellerOrder() {
     );
   }
 
-
+  // Hiển thị nội dung khi dữ liệu đã tải xong
+  return (
+    <Container className="mt-4 pb-5">
+      <Stack
+        direction={"row"}
+        sx={{ justifyContent: "space-between", alignItems: "center" }}
+      >
+        <Stack direction={"row"} spacing={3} sx={{ alignItems: "center" }}>
+          <h3>Phiếu đặt hàng</h3>
+          
+        </Stack>
+        <Box>
+          <Button
+            onClick={() => navigate("/create-order")}
+            sx={{ textTransform: "initial" }}
+            variant="outlined"
+          >
+            + Tạo đơn hàng mới
+          </Button>
+        </Box>
+      </Stack>
+      <Stack
+        className="mt-4"
+        sx={{ alignItems: "start" }}
+        direction={"row"}
+        spacing={3}
+      >
+        <Box sx={{ width: "25%" }}>
+          <SellerOrderFilter 
+            startDateInit={startDate} 
+            endDateInit={endDate} 
+            initialStatuses={selectedStatuses}
+            onStatusChange={handleStatusChange}
+          />
+        </Box>
+        <Box>
+          <SellerOrderTable data={data} refetch={refetch} />
+          <OrderPagination page={totalPage} currentPage={page} onPageChange={handlePageChange} />
+        </Box>
+      </Stack>
+    </Container>
+  );
 }
