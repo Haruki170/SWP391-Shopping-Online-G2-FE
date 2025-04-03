@@ -188,14 +188,7 @@ const AddProduct = () => {
     }
     console.log("avatar:", formData.getAll("images[]"));
     // thay đổi ở đây
-    //add them images
-    const placeholderImage =
-      "https://cdn-app.kiotviet.vn/retailler/Content/img/default-product-img.jpg";
-    productImages.map(async (imageUrl) => {
-      if (imageUrl !== placeholderImage) {
-        formData.append("images[]", imageUrl);
-      }
-    });
+
     console.log("Images:", formData.getAll("images[]"));
     try {
       const response = await fetch.post("/product/add", formData);
