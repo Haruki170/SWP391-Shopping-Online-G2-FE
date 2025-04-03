@@ -14,7 +14,23 @@ const StyledBox = styled(Box)({
   borderRadius: "8px",
 });
 
+const AddBannerModal = ({ open, handleClose, handleAddBanner }) => {
+  const [description, setDescription] = useState("");
+  const [image, setImage] = useState(null);
 
+  const handleSubmit = () => {
+    if (!image) {
+      alert("Vui lòng chọn ảnh!");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("image", image);
+    formData.append("description", description);
+
+    handleAddBanner(formData);
+    handleClose();
+  };
 
   return (
     <Modal open={open} onClose={handleClose}>
