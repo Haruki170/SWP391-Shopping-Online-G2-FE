@@ -35,24 +35,7 @@ const Payment = () => {
             Cảm ơn {email} đã đặt hàng
             <br /> Chi tiết đơn hàng của bạn:
           </p>
-          <div className="detail mt-5">
-            <Stack direction={"column"} spacing={2}>
-              <Stack
-                direction={"row"}
-                spacing={3}
-                sx={{ justifyContent: "center", gap: "15px" }}
-              >
-                <Typography
-                  className="detail-title"
-                  variant="body1"
-                  sx={{ fontWeight: "500" }}
-                >
-                  {pay == 1 ? "Bạn đã thanh toán:" : "Bạn cần thanh toán : "}
-                </Typography>
-                <Typography variant="body1" color="initial">
-                  {formatCurrency(amount)}
-                </Typography>
-              </Stack>
+          
               <Stack
                 direction={"row"}
                 spacing={3}
