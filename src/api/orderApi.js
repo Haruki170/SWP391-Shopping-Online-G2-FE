@@ -17,6 +17,23 @@ export const createOrderCod = async(data)=>{
     return content.data.data 
 }
 
+export const getOrderByShop = async (page, startDate, endDate, status = []) => {
+    let url = `/order/get-all?page=${page}`;
+    
+    // Thêm tham số startDate và endDate nếu có
+    if (startDate && endDate) {
+        url += `&startDate=${startDate}&endDate=${endDate}`;
+    }
+    
+    // Thêm tham số status nếu có
+    if (status.length > 0) {
+        url += `&status=${status.join(",")}`; // Chuyển mảng status thành chuỗi
+    }
+
+    // Gọi API
+    const content = await fetch.get(url);
+    return content.data;
+};
 
 export const getOneOrder = async (id)=> {
     let content = await fetch.get("/order/get-one/"+id)
