@@ -38,39 +38,7 @@ const ECommerce = () => {
         setIncome(netRevenue);
 
         // Calculate monthly income
-        const currentMonth = new Date().getMonth();
-        const currentYear = new Date().getFullYear();
-        const monthlyRevenue = transactions
-          .filter((transaction) => {
-            const date = new Date(transaction.create_at);
-            return (
-              date.getMonth() === currentMonth &&
-              date.getFullYear() === currentYear
-            );
-          })
-          .reduce((total, transaction) => {
-            return transaction.type === 1
-              ? total + transaction.amount
-              : total - transaction.amount;
-          }, 0);
-        setMonthlyIncome(monthlyRevenue);
-
-        // Recent transactions for notifications
-        const sortedTransactions = transactions
-          .sort((a, b) => new Date(b.create_at) - new Date(a.create_at))
-          .slice(0, 4);
-        setRecentTransactions(sortedTransactions);
-
-        // Calculate total income and expense amounts
-        const totalIncome = transactions
-          .filter(t => t.type === 1)
-          .reduce((sum, t) => sum + t.amount, 0);
-
-        const totalExpense = transactions
-          .filter(t => t.type !== 1)
-          .reduce((sum, t) => sum + t.amount, 0);
-
-        const totalAmount = totalIncome + totalExpense;
+        
 
         // Calculate percentages for income vs. expense
         if (totalAmount > 0) {
