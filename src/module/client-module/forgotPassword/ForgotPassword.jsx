@@ -1,139 +1,159 @@
-import React, { useState } from 'react';
-import { Alert, Box, Button, Stack, Typography } from "@mui/material";
-import { NavLink, useNavigate } from "react-router-dom";
-import "./ForgotPassword.scss"
-import Form from "react-bootstrap/Form";
-import { useForm, Controller } from "react-hook-form";
+import React, { useState } from "react";
+import { useForm } from "react-hook-form";
+import {
+    Container,
+    Box,
+    TextField,
+    Button,
+    Typography,
+    Checkbox,
+    Link,
+    FormControlLabel,
+    Alert,
+} from "@mui/material";
+import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { yupResolver } from '@hookform/resolvers/yup';
-import { forgotPassword } from '../../../api/customerApi';
-import { useMutation } from '@tanstack/react-query'; // Thêm import useMutation
-import Loading from '../loading/Loading';
-import { useDispatch } from 'react-redux';
-import { SAVE_EMAIL } from '../../../redux/slice/ForgotPasswordSlice';
+import axios from "axios";
+import { Navigate, useNavigate } from "react-router-dom";
+import { LOGIN, LOGOUT } from "../../../redux/slice/AuthSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { useMutation } from "@tanstack/react-query";
+import { forgotPassword } from "../../../api/customerApi";
+import Loading from "../../client-module/loading/Loading";
+import { SAVE_EMAIL } from "../../../redux/slice/ForgotPasswordSlice";
+import Swal from "sweetalert2";
+// Định nghĩa schema với yup
+const schema = yup.object().shape({
+  email: yup
+      .string()
+      .required("Vui lòng nhập email")
+      .email("Email không hợp lệ")
+});
 
 const ForgotPassword = () => {
-  const dispatch = useDispatch();
-  const formData = [
-    {
-      label: "Email",
-      placeholder: "Nhập email",
-      name: "email",
-      type: "text"
-    },
-  ];
+ 
 
-  const [err, setErr] = useState(null);
 
-  const schema = yup
-    .object({
-      email: yup
-        .string()
-        .required("vui lòng nhập email")
-        .email("Email không hợp lệ")
-    });
-
-  const { control, register, handleSubmit, formState: { errors } } = useForm({
-    defaultValues: {
-      email: "",
-    },
-    resolver: yupResolver(schema),
-    mode: "all"
-  });
-
-  const navigate = useNavigate();
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
+  const [err, setErr] = useState(null)
 
   const { mutate, isPending } = useMutation({
-    mutationFn: (data) => forgotPassword(data),
-    onSuccess: (data) => {
-      dispatch(SAVE_EMAIL(data))
-      return navigate("/send-code");
-    },
-    onError: (error) => {
-      console.log(error);
-      setErr(error.response.data.message);
-
-    }
+      mutationFn: (data) => forgotPassword(data),
+      onSuccess: (response) => {
+          console.log("response: ",response);
+          // Hiển thị thông báo thành công
+          Swal.fire({
+              icon: 'success',
+              title: 'Thành công',
+              text: response.message || 'Email khôi phục mật khẩu đã được gửi',
+              confirmButtonColor: '#28a745',
+          });
+          console.log(response)
+          dispatch(SAVE_EMAIL(response)); // Lưu email vào redux
+          navigate("/send-code");
+      },
+      onError: (error) => {
+          console.log(error);
+          setErr(error.response?.data?.message || 'Có lỗi xảy ra khi gửi email');
+      }
   })
 
-  const onSubmit = (data) => {
+  const {
+      register,
+      handleSubmit,
+      formState: { errors },
+  } = useForm({
+      resolver: yupResolver(schema), // Tích hợp yup để kiểm tra form
+      mode: "all",
+  });
 
-    mutate(data); // Gọi mutate với dữ liệu email
-  };
-
-  const navigateToLogin = () => {
-    console.log("navigateToLogin");
-    return navigate("/login");
-  };
-
-  if(isPending){
-    return <Loading />
+  const onSubmit = async (data) => {
+      mutate(data);
   }
-
+  if (isPending) {
+      return <Loading />
+  }
   return (
-    <section style={{ backgroundColor: "#f3f3f3" }} id="forgot-password">
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Stack gap={3}>
-          <Typography variant="h5" sx={{ fontWeight: "600" }} color="initial">
-            Đổi mật khẩu
-          </Typography>
-
-          {err != null ? <Alert severity='error'>{err}</Alert> : null}
-
-          {formData.map((item) => {
-            return (
-
-              <Form.Group key={item.name} className="form-input">
-                <Form.Label className="label">
-                  {item.label} <span>*</span>
-                </Form.Label>
-                <Form.Control
-                  className="mb-0"
-                  type={item.type}
-                  isInvalid={Boolean(errors[item.name])}
-                  {...register("email")}
-                  name={item.name}
-                  placeholder={item.placeholder}
-                />
-                {Boolean(errors[item.name]) ? (
-                  <Form.Control.Feedback type="invalid">
-                    {errors[item.name].message}
-                  </Form.Control.Feedback>
-                ) : (
-                  ""
-                )}
-              </Form.Group>
-
-            );
-          })}
-          <Button
-            type="submit"
-            sx={{
-              backgroundColor: "#ffcf20",
-              color: "#1b1b1b",
-              borderRadius: "999px",
-              textTransform: "capitalize",
-            }}
+      <Container maxWidth="xs">
+          <Box
+              sx={{
+                  marginTop: 8,
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  boxShadow: 3,
+                  padding: 4,
+                  borderRadius: 2,
+                  bgcolor: "#ffffff",
+              }}
           >
-            <b>Lấy lại mật khẩu</b>
-          </Button>
-          <Button
-            type="button"
-            onClick={navigateToLogin}
-            sx={{
-              backgroundColor: "white",
-              color: "#1b1b1b",
-              borderRadius: "999px",
-              textTransform: "capitalize",
-              border: "1px solid rgba(0, 0, 0, 0.5) !important",
-            }}
-          >
-            <b>Bạn đã là thành viên? Đăng nhập ngay!</b>
-          </Button>
-        </Stack>
-      </form>
-    </section>
+              <Typography
+                  component="h1"
+                  variant="h5"
+                  sx={{ fontWeight: "bold", mb: 1 }}
+              >
+                  Welcome to 6MEMs! 👋
+              </Typography>
+              <Typography
+                  variant="body2"
+                  color="textSecondary"
+                  sx={{ mb: 3, textAlign: "center" }}
+              >
+                  nhập email để đặt lại mật khẩu
+              </Typography>
+              {/* Hiển thị cảnh báo lỗi nếu có lỗi */}
+              {err && (
+                  <Alert severity="error" sx={{ mb: 2, width: "100%" }}>
+                      {err}
+                  </Alert>
+              )}
+              <Box
+                  component="form"
+                  onSubmit={handleSubmit(onSubmit)}
+                  noValidate
+                  sx={{ width: "100%" }}
+              >
+                  <TextField
+                      margin="normal"
+                      required
+                      fullWidth
+                      id="email"
+                      label="Email"
+                      name="email"
+                      autoComplete="email"
+                      placeholder="Enter your email or username"
+                      autoFocus
+                      {...register("email")}
+                      error={!!errors.email}
+                      helperText={errors.email ? errors.email.message : ""}
+                  />
+
+                  <Button
+                      type="submit"
+                      fullWidth
+                      variant="contained"
+                      sx={{
+                          mt: 3,
+                          mb: 2,
+                          background: "#6c5ce7",
+                          color: "#fff",
+                          textTransform: "none",
+                          fontWeight: "bold",
+                      }}
+                  >
+                      Gửi mã xác thực
+                  </Button>
+                  <Typography variant="body2" align="center" sx={{ mt: 1 }}>
+                      <Link href="/admin-gate/login" sx={{ color: "#6c5ce7", fontWeight: "bold" }}>
+                          Bạn đã là thành viên? Đăng nhập ngay!
+                      </Link>
+                  </Typography>
+              </Box>
+          </Box>
+      </Container>
   );
-}
+};
+
 
 export default ForgotPassword;

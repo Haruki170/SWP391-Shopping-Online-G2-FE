@@ -43,22 +43,32 @@ export const updateAdmin = async (content) => {
 }
 
 export const forgotPassword = async (content) => {
-    const data = await fetch.post(`/admin/forgot-password?email=${content.email}`)
-    return data.data.data
+    const data = await fetch.post('/admin/forgot-password', null, {
+        params: {
+            email: content.email
+        }
+    });
+    return data.data;
 }
 
 export const checkCode = async (content) => {
-    console.log(content);
-    let data = await fetch.post(`/admin/check-code?code=${content.code}&email=${content.email}`)
-    return data.data.data
+    const data = await fetch.post(`/admin/check-code`, null, {
+        params: {
+            code: content.code,
+            email: content.email
+        }
+    });
+    return data.data;
 }
 
 export const changePasswordByCode = async (content) => {
     console.log(content);
-    let data = await fetch.post(`/admin/change-password-by-code`, content)
-
-    return data.data.data
-    
+    let data = await fetch.post(`/admin/change-password-by-code`, {
+        email: content.email,
+        newPassword: content.newPassword,
+        confirmPassword: content.confirmPassword
+    });
+    return data.data;
 }
 
 export const changePassword = async (content) => {

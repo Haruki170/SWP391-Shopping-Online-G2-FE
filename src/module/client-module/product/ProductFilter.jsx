@@ -6,10 +6,10 @@ import { fetch } from '../../../api/Fetch';
 import { useParams } from "react-router-dom";
 
 const provinceFilter = [
-  { label: "Hà Nội" },
-  { label: "Hồ Chí Minh" },
-  { label: "Đà Nẵng" },
- // Thêm tùy chọn "Các tỉnh khác"
+  { label: "Hà Nội", value: "Hà Nội" },
+  { label: "Hồ Chí Minh", value: "Hồ Chí Minh" },
+  { label: "Đà Nẵng", value: "Đà Nẵng" },
+  { label: "Các tỉnh khác", value: "other" }
 ];
 
 const ratingFilter = [
@@ -26,6 +26,7 @@ const priceFilter = [
 ];
 
 const ProductFilter = ({ setFilterProduct }) => {
+
   const [province, setProvince] = useState('');
   const [rating, setRating] = useState(0);
   const [price, setPrice] = useState(0);
@@ -33,29 +34,38 @@ const ProductFilter = ({ setFilterProduct }) => {
 
   const fetchFilteredProducts = async () => {
     try {
-      const response = await fetch.get(`/product/filter?category=${categoryId}&province=${province}&rating=${rating}&price=${price}`);
+      let queryParams = new URLSearchParams();
+      
+      if (categoryId) queryParams.append('category', categoryId);
+      if (province && province !== 'other') queryParams.append('province', province);
+      if (rating > 0) queryParams.append('rating', rating);
+      if (price > 0) queryParams.append('price', price);
+
+      const response = await fetch.get(`/product/filter?${queryParams.toString()}`);
       if (response.status === 200) {
         setFilterProduct(response.data.data);
-        console.log('Dữ liệu lọc:', response.data.data);
       } else {
         setFilterProduct([]);
       }
     } catch (error) {
-      setFilterProduct([]);
       console.error('Lỗi khi lấy dữ liệu lọc:', error);
+      setFilterProduct([]);
     }
   };
 
+  // Reset tất cả các filter
+  const resetFilters = () => {
+    setProvince('');
+    setRating(0);
+    setPrice(0);
+  };
+
   useEffect(() => {
-    // Chỉ gọi API nếu có ít nhất một bộ lọc được thiết lập
-    if (province || rating || price) {
-      fetchFilteredProducts();
-    }
-  }, [province, rating, price]);
+    fetchFilteredProducts();
+  }, [province, rating, price, categoryId]);
 
   const handleProvinceChange = (event) => {
-    const value = event.target.value;
-    setProvince(value === "other" ? '' : value); // Đặt province thành rỗng nếu chọn "Các tỉnh khác"
+    setProvince(event.target.value);
   };
 
   const handleRatingChange = (event) => {
@@ -70,7 +80,21 @@ const ProductFilter = ({ setFilterProduct }) => {
 
   return (
     <div id="product-filter">
-      <h3>Bộ lọc</h3>
+      <Stack direction="row" justifyContent="space-between" alignItems="center">
+        <h3>Bộ lọc</h3>
+        <button 
+          onClick={resetFilters}
+          style={{
+            padding: '5px 10px',
+            backgroundColor: '#f0f0f0',
+            border: 'none',
+            borderRadius: '5px',
+            cursor: 'pointer'
+          }}
+        >
+          Xóa bộ lọc
+        </button>
+      </Stack>
 
       <Box sx={{ margin: "30px 0" }}>
         <Typography className="filter-label" variant="h6">Địa điểm</Typography>

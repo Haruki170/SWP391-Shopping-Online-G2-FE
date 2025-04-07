@@ -1,4 +1,5 @@
 import { fetch } from "./Fetch"
+import axios from "axios"
 
 export const getUserDetail = async () => {
     let data = await fetch.get("/customer/find")
@@ -18,7 +19,7 @@ export const updatePassword = async(content) =>{
     return data
 }
 
-export const getAllCustomers = async()=>{
+export const getAllCustomers = async() => {
     let data = await fetch.get("/customer/get-all")
     return data.data.data
 }
@@ -51,10 +52,13 @@ export const changePasswordByCode = async (content) => {
 }
 
 export const checkCode = async (content) => {
-    console.log(content);
-    
-    let data = await fetch.post(`/customer/check-code?code=${content}&email=${content.email}`)
-    return data.data.data
+    let data = await fetch.post(`/customer/check-code`, null, {
+        params: {
+            code: content.code,
+            email: content.email
+        }
+    });
+    return data.data;
 }
 
 

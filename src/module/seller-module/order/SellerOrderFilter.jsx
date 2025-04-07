@@ -90,8 +90,44 @@ const SellerOrderFilter = ({ startDateInit, endDateInit }) => {
     navigate(url);
   };
 
+  const handleClearFilter = () => {
+    // Reset date states
+    setSelectionRange({
+      startDate: null,
+      endDate: null,
+      key: "selection"
+    });
+    setFilterDate("");
+    
+    // Reset status states
+    setSelectedStatuses([]);
+    
+    // Reset URL params
+    navigate('/seller/order?page=1');
+  };
+
   return (
     <div id="order-filter">
+      <Box sx={{
+        display: 'flex',
+        justifyContent: 'flex-end',
+        marginBottom: '10px'
+      }}>
+        <button
+          onClick={handleClearFilter}
+          style={{
+            padding: '4px 12px',
+            backgroundColor: '#f44336',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer',
+            fontSize: '14px'
+          }}
+        >
+          Đặt lại
+        </button>
+      </Box>
       <Box
         sx={{
           border: "1px solid #ccc",

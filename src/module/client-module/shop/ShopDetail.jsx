@@ -21,7 +21,7 @@ import LocalMallIcon from "@mui/icons-material/LocalMall";
 import ChatIcon from "@mui/icons-material/Chat";
 import PhoneIcon from "@mui/icons-material/Phone";
 import parse from "html-react-parser";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { fetch } from "../../../api/Fetch";
 import { useQuery } from "@tanstack/react-query";
 import Backdrop from "@mui/material/Backdrop";
@@ -74,7 +74,12 @@ export const ShopDetail = () => {
       setShopInfo({});
     }
   };
+  const navigate = useNavigate();
 
+  const handleCardClick = (productId) => {
+    // Navigate to the product detail page using the product ID
+    navigate(`/product-detail/${productId}`);
+  };
   console.log(data);
   const handleOpenBlog = (blog) => {
     setSelectedBlog(blog);
@@ -189,6 +194,7 @@ export const ShopDetail = () => {
                   "&:hover": { transform: "scale(1.05)" },
                   height: "100%",
                 }}
+                onClick={() => handleCardClick(product.id)}
               >
                 <CardMedia
                   component="img"

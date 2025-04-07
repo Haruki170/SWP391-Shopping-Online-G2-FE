@@ -300,86 +300,80 @@ const ClientHeader = () => {
               </Box>
               <SearchBar></SearchBar>
               <Box sx={{ width: "20%" }}>
-                <Stack direction={"row"} gap={1} sx={{ justifyContent: "end" }}>
-                  <Link
-                    to={"/chat"}
-                    style={{
-                      textDecoration: "none",
-                      color: "white",
-                      fontWeight: "500",
-                      fontSize: "14px",
-                    }}
-                  >
-                    <Badge
-                      badgeContent={
-                        (totalItem != undefined ||
-                          totalItem != null ||
-                          totalItem == 0) &&
-                        totalErr == false
-                          ? totalItem == 0
-                            ? "0"
-                            : totalItem
-                          : "0"
-                      }
-                      sx={{ display: "inline-block", marginRight: "10px" }}
-                      color="error"
+                {userdetail && !isError ? (
+                  <Stack direction={"row"} gap={1} sx={{ justifyContent: "end" }}>
+                    <Link
+                      to={"/chat"}
+                      style={{
+                        textDecoration: "none",
+                        color: "white",
+                        fontWeight: "500",
+                        fontSize: "14px",
+                      }}
                     >
-                      <ChatIcon sx={{ color: "white" }} />
-                    </Badge>
-                  </Link>
-                  <Link
-                    to={"/cart"}
-                    style={{
-                      textDecoration: "none",
-                      color: "white",
-                      fontWeight: "500",
-                      fontSize: "14px",
-                    }}
-                  >
-                    <Badge
-                      badgeContent={
-                        (totalItem != undefined ||
-                          totalItem != null ||
-                          totalItem == 0) &&
-                        totalErr == false
-                          ? totalItem == 0
-                            ? "0"
-                            : totalItem
-                          : "0"
-                      }
-                      sx={{ display: "inline-block", marginRight: "10px" }}
-                      color="error"
+                      <Badge
+                        badgeContent={ "0"
+                        }
+                        sx={{ display: "inline-block", marginRight: "10px" }}
+                        color="error"
+                      >
+                        <ChatIcon sx={{ color: "white" }} />
+                      </Badge>
+                    </Link>
+                    <Link
+                      to={"/cart"}
+                      style={{
+                        textDecoration: "none",
+                        color: "white",
+                        fontWeight: "500",
+                        fontSize: "14px",
+                      }}
                     >
-                      <ShoppingCartOutlinedIcon sx={{ color: "white" }} />
-                    </Badge>
-                    Giỏ hàng
-                  </Link>
+                      <Badge
+                        badgeContent={
+                          (totalItem != undefined ||
+                            totalItem != null ||
+                            totalItem == 0) &&
+                          totalErr == false
+                            ? totalItem == 0
+                              ? "0"
+                              : totalItem
+                            : "0"
+                        }
+                        sx={{ display: "inline-block", marginRight: "10px" }}
+                        color="error"
+                      >
+                        <ShoppingCartOutlinedIcon sx={{ color: "white" }} />
+                      </Badge>
+                      Giỏ hàng
+                    </Link>
 
-                  <Link
-                    to={"/favourite"}
-                    style={{
-                      textDecoration: "none",
-                      color: "white",
-                      fontWeight: "500",
-                      fontSize: "14px",
-                    }}
-                  >
-                    <Badge
-                      badgeContent={
-                        (totalFavourites != undefined ||
-                          totalFavourites != null) &&
-                        !favouriteError
-                          ? totalFavourites
-                          : "0"
-                      }
-                      sx={{ display: "inline-block", marginRight: "10px" }}
-                      color="error"
+                    <Link
+                      to={"/favourite"}
+                      style={{
+                        textDecoration: "none",
+                        color: "white",
+                        fontWeight: "500",
+                        fontSize: "14px",
+                      }}
                     >
-                      <FavoriteBorderIcon sx={{ color: "white" }} />
-                    </Badge>
-                    Yêu thích
-                  </Link>
-                </Stack>
+                      <Badge
+                        badgeContent={
+                          (totalFavourites != undefined ||
+                            totalFavourites != null) &&
+                          !favouriteError
+                            ? totalFavourites
+                            : "0"
+                        }
+                        sx={{ display: "inline-block", marginRight: "10px" }}
+                        color="error"
+                      >
+                        <FavoriteBorderIcon sx={{ color: "white" }} />
+                      </Badge>
+                      Yêu thích
+                    </Link>
+                  </Stack>
+                ) : null}
               </Box>
             </Stack>
           </Row>

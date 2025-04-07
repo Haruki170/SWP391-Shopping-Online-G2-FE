@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"; // Thêm useEffect vào import
+import React, { useState } from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -11,26 +11,43 @@ import { getAllShopOwner, updateStatus } from "../../../api/ShopOwnerApi";
 import { useMutation, useQuery } from '@tanstack/react-query';
 import Loading from "../../client-module/loading/Loading";
 import ModalEmail from "../shop-resgiter/ModalEmail";
+import Swal from 'sweetalert2';
 
 const TableUser = () => {
+  const [page, setPage] = useState(1);
+  const PAGE_SIZE = 8;
 
   const { data: shopOwner, isLoading, refetch } = useQuery({
     queryKey: ['shopOwner'],
     queryFn: getAllShopOwner,
-    
   })
 
+  // Tính toán dữ liệu cho trang hiện tại
+  const getCurrentPageData = () => {
+    if (!shopOwner) return [];
+    const startIndex = (page - 1) * PAGE_SIZE;
+    const endIndex = startIndex + PAGE_SIZE;
+    return shopOwner.slice(startIndex, endIndex);
+  };
+
+  // Tính tổng số trang
+  const totalPages = shopOwner ? Math.ceil(shopOwner.length / PAGE_SIZE) : 0;
+
+  // Xử lý thay đổi trang
+  const handlePageChange = (event, value) => {
+    setPage(value);
+  };
   
   const [show,setShow] = useState(false)
-    const [email,setMail] = useState(null)
-    const handleMail = (email) =>{
-        setMail(email)
-        setShow(true)
-    }
+  const [email,setMail] = useState(null)
+  const handleMail = (email) =>{
+      setMail(email)
+      setShow(true)
+  }
 
-    const handleClose = () =>{
-      setShow(false)
-    }
+  const handleClose = () =>{
+    setShow(false)
+  }
 
   const { mutate } = useMutation({
     mutationFn: (data) => updateStatus(data),
@@ -48,10 +65,8 @@ const TableUser = () => {
     }
   })
 
-
   const handleChangeStatus = (id, newStatus) => {
     console.log(id, newStatus);
-
 
     if (newStatus === "1") {
       alert("Đã kích hoạt tài khoản")
@@ -60,7 +75,6 @@ const TableUser = () => {
     }
     mutate({ id: id, status: newStatus });
   };
-
 
   if (isLoading) {
     return <Loading></Loading>
@@ -80,13 +94,13 @@ const TableUser = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {shopOwner && shopOwner.map((s, index) => ( // Sửa rows thành shopOwner
+              {getCurrentPageData().map((s, index) => (
                 <TableRow
-                  key={s.name} // Sử dụng s.name làm key
+                  key={s.id}
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                 >
                   <TableCell component="th" scope="row">
-                    {index + 1}
+                    {(page - 1) * PAGE_SIZE + index + 1}
                   </TableCell>
                   <TableCell >{s.email}</TableCell>
                   <TableCell >{s.create_at}</TableCell>
@@ -97,11 +111,11 @@ const TableUser = () => {
                         <Button variant="contained" color="success" onClick={() => handleChangeStatus(s.id, 1)}>
                           Kích hoạt
                         </Button>
-                      ) : s.status === 1 ? ( // Thêm điều kiện cho status 1
+                      ) : s.status === 1 ? (
                         <Button variant="contained" color="error" onClick={() => handleChangeStatus(s.id, 2)}>
                           Chặn
                         </Button>
-                      ) : s.status === 2 ? ( // Sửa lỗi cú pháp ở đây
+                      ) : s.status === 2 ? (
                         <Button variant="contained" color="primary" onClick={() => handleChangeStatus(s.id, 1)}>Bỏ chặn</Button>
                       ) : null}
                       <Button variant="contained" color="warning" onClick={() =>handleMail(s.email)}>Gửi mail</Button>
@@ -112,7 +126,14 @@ const TableUser = () => {
             </TableBody>
           </Table>
         </TableContainer>
-        <Pagination className="mt-4" count={10} color="primary" />
+        <div className="mt-4 d-flex justify-content-center">
+          <Pagination 
+            count={totalPages} 
+            page={page} 
+            onChange={handlePageChange} 
+            color="primary" 
+          />
+        </div>
       </div>
     );
   }

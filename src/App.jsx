@@ -16,6 +16,7 @@ import SellerLayout from "./layout/SellerLayout";
 import SellerDashboard from "./module/seller-module/dashboard/SellerDashboard";
 import "./app.css";
 import AdminLayout from "./layout/AdminLayout";
+import ShipperLayout from "./layout/ShipperLayout";
 import AdminDashboard from "./module/admin-module/dashboard/AdminDashboard";
 import Favourite from "./module/client-module/favourite/Favourite";
 import ProductManagement from "./module/seller-module/product/ProductManagement";
@@ -256,6 +257,12 @@ function App() {
           ></Route>
           <Route path="customer-report" element={<CustomerReport/>}/>
           <Route path="shop-report" element={<ShopReport/>} />
+        </Route>
+
+        {/* route shipper */}
+        <Route path="/shipper" element={<ShipperLayout />}>
+          {/* <Route index element={<AdminDashboard />} />
+          <Route path="shopOwner" element={<ShopOwner />} /> */}
         </Route>
       </Routes>
     </>

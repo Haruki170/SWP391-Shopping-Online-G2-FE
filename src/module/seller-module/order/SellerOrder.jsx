@@ -91,13 +91,7 @@ export default function SellerOrder() {
           
         </Stack>
         <Box>
-          <Button
-            onClick={() => navigate("/create-order")}
-            sx={{ textTransform: "initial" }}
-            variant="outlined"
-          >
-            + Tạo đơn hàng mới
-          </Button>
+          
         </Box>
       </Stack>
       <Stack

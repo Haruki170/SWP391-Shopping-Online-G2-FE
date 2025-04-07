@@ -87,21 +87,17 @@ export default function ShopDetailAdmin() {
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
           <Tab sx={{textTransform:"initial"}} label="Danh sách sản phẩm" {...a11yProps(0)} />
-          <Tab  sx={{textTransform:"initial"}} label="Lịch sử giao dịnh với cửa hàng" {...a11yProps(1)} />
-          <Tab  sx={{textTransform:"initial"}} label="Yêu cầu hủy đơn" {...a11yProps(2)} />
-          <Tab  sx={{textTransform:"initial"}} label="Thông tin và trạng thái cửa hàng" {...a11yProps(3)} />
+          <Tab  sx={{textTransform:"initial"}} label="Yêu cầu hủy đơn" {...a11yProps(1)} />
+          <Tab  sx={{textTransform:"initial"}} label="Thông tin và trạng thái cửa hàng" {...a11yProps(2)} />
         </Tabs>
       </Box>
       <CustomTabPanel value={value} index={0}>
         <ShopProduct data={data}></ShopProduct>
       </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>
-        <ShopTransaction data={transaction}></ShopTransaction>
-      </CustomTabPanel>
-      <CustomTabPanel value={value} index={2}>
         <OrderCancel order={order}></OrderCancel>
       </CustomTabPanel>
-      <CustomTabPanel value={value} index={3}>
+      <CustomTabPanel value={value} index={2}>
         <ShopDetailStatus shop={shopDetail}></ShopDetailStatus>
       </CustomTabPanel>
     </Box>

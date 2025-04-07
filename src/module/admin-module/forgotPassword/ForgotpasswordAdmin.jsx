@@ -21,6 +21,7 @@ import { useMutation } from "@tanstack/react-query";
 import { forgotPassword } from "../../../api/AdminApi";
 import Loading from "../../client-module/loading/Loading";
 import { SAVE_EMAIL } from "../../../redux/slice/ForgotPasswordSlice";
+import Swal from "sweetalert2";
 
 // Định nghĩa schema với yup
 const schema = yup.object().shape({
@@ -38,17 +39,20 @@ const ForgotPasswordAdmin = () => {
     const { mutate, isPending } = useMutation({
         mutationFn: (data) => forgotPassword(data),
         onSuccess: (response) => {
-            console.log(response);
-            dispatch(SAVE_EMAIL(response))
+            console.log("response: ",response);
+            // Hiển thị thông báo thành công
+            Swal.fire({
+                icon: 'success',
+                title: 'Thành công',
+                text: response.message || 'Email khôi phục mật khẩu đã được gửi',
+                confirmButtonColor: '#28a745',
+            });
+            dispatch(SAVE_EMAIL(response.data)); // Lưu email vào redux
             navigate("/admin-gate/send-code");
-            return; // Đảm bảo không có giá trị trả về
         },
         onError: (error) => {
             console.log(error);
-            if (err.response) {
-                setErr(error.response.data.message);
-            }
-
+            setErr(error.response?.data?.message || 'Có lỗi xảy ra khi gửi email');
         }
     })
 

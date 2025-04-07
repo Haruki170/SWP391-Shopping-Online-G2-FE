@@ -98,15 +98,15 @@ const Cart = () => {
   });
 
   const handleQuantityChange = (cart_item_id, change) => {
-  setProduct((prevProducts) =>
-    prevProducts.map((item) =>
-      item.id === cart_item_id
-        ? { ...item, quantity: item.quantity + change }
-        : item
-    )
-  );
-  handleUpdate({ id: cart_item_id, quantity: change== 1 ? 1: 0 });
-};
+    setProduct((prevProducts) =>
+      prevProducts.map((item) =>
+        item.id === cart_item_id
+          ? { ...item, quantity: item.quantity + change }
+          : item
+      )
+    );
+    handleUpdate({ id: cart_item_id, quantity: change== 1 ? 1: 0 });
+  };
 
   const totalPrice = product.reduce((total, item) => {
     // Tính giá trị addons cho từng sản phẩm

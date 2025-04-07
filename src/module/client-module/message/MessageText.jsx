@@ -1,55 +1,32 @@
 import { Avatar, Stack, Typography } from "@mui/material";
 import React from "react";
 
-const MessageText = ({ color, avatar, text, yourself }) => {
-  // Hàm getShort để cắt chuỗi khi nó dài hơn 100 ký tự
-  console.log(yourself);
-  
-
+const MessageText = ({ avatar, text, yourself }) => {
   return (
-    <>
-      {yourself ? (
-        <Stack
-          direction={"row"}
-          sx={{ justifyContent: yourself ? "end" : "start", my: 3 }}
-          spacing={1}
-        >
-          <Typography
-            sx={{
-              backgroundColor: "rgba(238,240,242,1)",
-              padding: "2px 10px",
-              borderRadius: "10px",
-              maxWidth: "50%",
-            }}
-            variant="body1"
-            color="initial"
-          >
-            {text} {/* Cắt chuỗi nếu nó dài hơn 100 ký tự */}
-          </Typography>
-          <Avatar sx={{ width: 30, height: 30 }} alt="User" src={avatar} />
-        </Stack>
-      ) : (
-        <Stack
-          direction={"row"}
-          sx={{ justifyContent: yourself ? "end" : "start", my: 3 }}
-          spacing={1}
-        >
-          <Avatar sx={{ width: 30, height: 30 }} alt="User" src={avatar} />
-          <Typography
-            sx={{
-              backgroundColor: "rgba(238,240,242,1)",
-              padding: "2px 10px",
-              borderRadius: "10px",
-              maxWidth: "50%",
-            }}
-            variant="body1"
-            color="initial"
-          >
-            {text} {/* Cắt chuỗi nếu nó dài hơn 100 ký tự */}
-          </Typography>
-        </Stack>
-      )}
-    </>
+    <Stack
+      direction={"row"}
+      sx={{ 
+        justifyContent: yourself ? "flex-end" : "flex-start", 
+        my: 2,
+        mx: 1 
+      }}
+      spacing={1}
+    >
+      {!yourself && <Avatar sx={{ width: 30, height: 30 }} alt="User" src={avatar} />}
+      <Typography
+        sx={{
+          backgroundColor: yourself ? "#0084ff" : "#e4e6eb",
+          color: yourself ? "white" : "black",
+          padding: "8px 12px",
+          borderRadius: "18px",
+          maxWidth: "70%",
+          wordBreak: "break-word"
+        }}
+      >
+        {text}
+      </Typography>
+      {yourself && <Avatar sx={{ width: 30, height: 30 }} alt="User" src={avatar} />}
+    </Stack>
   );
 };
 

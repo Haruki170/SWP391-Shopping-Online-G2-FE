@@ -434,7 +434,7 @@ const Detail = () => {
                   }}
                 >
                   <Box variant="body2" sx={{ marginRight: "10px" }}>
-                    Các add-on:
+                    Các lựa chọn:
                   </Box>
                   <Box sx={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
                     {product.addOns.map((option) => (

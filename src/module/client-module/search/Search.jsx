@@ -40,12 +40,13 @@ export default function Search() {
   const [value, setValue] = React.useState(0);
   const [searchParams] = useSearchParams();
   const type = searchParams.get("type");
+  const key = searchParams.get("key") || "";
 
   React.useEffect(() => {
     if (type === "shop") {
-      setValue(0);  // If 'type=shop', switch to ShopSearch
+      setValue(0); // Switch to ShopSearch
     } else {
-      setValue(1);  // Default to ProductSearch
+      setValue(1); // Default to ProductSearch
     }
   }, [type]);
 
@@ -65,7 +66,7 @@ export default function Search() {
         <ShopSearch />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>
-        <ProductSearch />
+        <ProductSearch searchTerm={key} />
       </CustomTabPanel>
     </Box>
   );

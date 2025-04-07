@@ -20,6 +20,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useMutation } from "@tanstack/react-query";
 import { checkCode, forgotPassword } from "../../../api/AdminApi";
 import Loading from "../../client-module/loading/Loading";
+import Swal from "sweetalert2";
 
 // Định nghĩa schema với yup
 const schema = yup.object().shape({
@@ -36,17 +37,37 @@ const SendCode = () => {
     const [err, setErr] = useState(null)
 
     const { mutate, isPending } = useMutation({
-        mutationFn: (data) => checkCode(data),
+        mutationFn: (data) => {
+            // Log để kiểm tra data
+            console.log("Data being sent:", {
+                code: data.code,
+                email: email
+            });
+            
+            return checkCode({
+                code: data.code,
+                email: email // email từ redux store
+            });
+        },
         onSuccess: (response) => {
-            console.log(response);
-            navigate("/admin-gate/reset-password");
+            console.log("response: ",response);
+            Swal.fire({
+                icon: 'success',
+                title: 'Xác thực thành công',
+                text: response?.data?.message || 'Mã xác thực chính xác',
+                confirmButtonColor: '#28a745',
+            }).then(() => {
+                navigate("/admin-gate/reset-password");
+            });
         },
         onError: (error) => {
-            console.log(error);
-            if (err.response) {
-                setErr(error.response.data.message);
-            }
-
+            console.log("error: ",error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Xác thực thất bại',
+                text: error.response?.data?.message || 'Mã xác thực không hợp lệ',
+                confirmButtonColor: '#dc3545',
+            });
         }
     })
 
@@ -62,10 +83,27 @@ const SendCode = () => {
         mode: "all",
     });
 
-    const onSubmit = async (data) => {
-        console.log(data);
-
-        mutate(data);
+    const onSubmit = (data) => {
+        // Log để kiểm tra email từ redux
+        console.log("Current email from redux:", email);
+        
+        if (!email) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Lỗi',
+                text: 'Không tìm thấy email. Vui lòng thực hiện lại từ đầu',
+                confirmButtonColor: '#dc3545',
+            }).then(() => {
+                navigate("/admin-gate/forgot-password"); // Chuyển về trang forgot password
+            });
+            return;
+        }
+        
+        // Gửi cả code và email
+        mutate({
+            code: data.code,
+            email: email
+        });
     }
     if (isPending) {
         return <Loading />

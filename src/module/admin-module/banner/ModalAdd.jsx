@@ -1,4 +1,4 @@
-import  { useState } from "react";
+import { useState, useEffect } from "react";
 import { Modal, Box, TextField, Button } from "@mui/material";
 import { styled } from "@mui/system";
 
@@ -14,30 +14,49 @@ const StyledBox = styled(Box)({
   borderRadius: "8px",
 });
 
-const AddBannerModal = ({ open, handleClose, handleAddBanner }) => {
+const AddBannerModal = ({
+  open,
+  handleClose,
+  handleAddBanner,
+  handleUpdateBanner,
+  editBanner,
+}) => {
   const [description, setDescription] = useState("");
   const [image, setImage] = useState(null);
 
+  useEffect(() => {
+    if (editBanner) {
+      setDescription(editBanner.description);
+    } else {
+      setDescription("");
+      setImage(null);
+    }
+  }, [editBanner]);
+
   const handleSubmit = () => {
-    if (!image) {
-      alert("Vui lòng chọn ảnh!");
+    if (!editBanner && !image) {
+      alert("Please select an image!");
       return;
     }
 
     const formData = new FormData();
-    formData.append("image", image);
+    if (image) formData.append("image", image);
     formData.append("description", description);
 
-    handleAddBanner(formData);
+    if (editBanner) {
+      handleUpdateBanner(editBanner.id, formData);
+    } else {
+      handleAddBanner(formData);
+    }
     handleClose();
   };
 
   return (
     <Modal open={open} onClose={handleClose}>
       <StyledBox>
-        <h2>Thêm Banner</h2>
+        <h2>{editBanner ? "Edit Banner" : "Add Banner"}</h2>
         <TextField
-          label="Mô tả"
+          label="Description"
           fullWidth
           margin="normal"
           value={description}
@@ -49,12 +68,19 @@ const AddBannerModal = ({ open, handleClose, handleAddBanner }) => {
           onChange={(e) => setImage(e.target.files[0])}
           style={{ marginBottom: "16px" }}
         />
+        {editBanner && (
+          <img
+            src={editBanner.image}
+            alt="Current banner"
+            style={{ maxWidth: "100%", marginBottom: "16px" }}
+          />
+        )}
         <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1 }}>
           <Button onClick={handleClose} color="error">
-            Hủy
+            Cancel
           </Button>
           <Button onClick={handleSubmit} variant="contained" color="primary">
-            Thêm
+            {editBanner ? "Update" : "Add"}
           </Button>
         </Box>
       </StyledBox>

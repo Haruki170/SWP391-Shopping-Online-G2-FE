@@ -1,5 +1,5 @@
-
 import { fetch } from "./Fetch"
+import axios from "axios"
 
 export const getOrder =async (data) => {
     let content = await fetch.post('/order/get-order',data)
@@ -7,12 +7,13 @@ export const getOrder =async (data) => {
 }
 
 export const createOrderVnPay= async(data) =>{
+    console.log("data",data)
     let content = await fetch.post("/payment/create-vnpay",data)
     return content.data.data 
 }
 
 export const createOrderCod = async(data)=>{
-    console.log(data);
+    console.log("data",data);
     let content = await fetch.post("/payment/create-cod",data)
     return content.data.data 
 }
@@ -62,3 +63,7 @@ export const customerHandleCancel =async (id) => {
     let data = await fetch.put("/order/customer-handle-cancel?orderId="+id)
     return data.data
 }
+
+export const updateShipCost = async (id, shipCost) => {
+  return await fetch.put(`/order/update-ship-cost?orderId=${id}&shipCost=${shipCost}`);
+};

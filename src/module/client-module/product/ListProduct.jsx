@@ -4,6 +4,7 @@ import "./product.scss";
 import { Box, Rating, Stack, Pagination } from "@mui/material";
 
 const ListProduct = ({ products = [] }) => {
+  console.log(products)
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [sortOption, setSortOption] = useState(""); // Trạng thái để lưu tiêu chí sắp xếp

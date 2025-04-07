@@ -16,8 +16,8 @@ import { useNavigate } from "react-router-dom";
 
 const AllOrderHistory = ({ data }) => {
   const navigate = useNavigate();
-  const [page, setPage] = useState(1); // `Pagination` sử dụng page 1-based
-  const rowsPerPage = 6; // Mỗi trang có 6 đơn hàng
+  const [page, setPage] = useState(1);
+  const PAGE_SIZE = 8;
 
   const formatCurrency = (value) => {
     return value.toLocaleString("vi-VN", {
@@ -50,7 +50,7 @@ const AllOrderHistory = ({ data }) => {
           </TableHead>
           <TableBody>
             {data
-              .slice((page - 1) * rowsPerPage, page * rowsPerPage) // Tính số hàng hiển thị trên mỗi trang
+              .slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE) // Tính số hàng hiển thị trên mỗi trang
               .map((order) => {
                 let styleOrder = {};
                 switch (order.order_status) {
@@ -110,7 +110,7 @@ const AllOrderHistory = ({ data }) => {
       </TableContainer>
       <Pagination
         sx={{ p: 4 }}
-        count={Math.ceil(data.length / rowsPerPage)} // Tổng số trang
+        count={Math.ceil(data.length / PAGE_SIZE)} // Tổng số trang
         page={page}
         color="primary"
         onChange={handleChangePage}

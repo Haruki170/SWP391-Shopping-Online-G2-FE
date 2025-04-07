@@ -10,96 +10,209 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  Snackbar,
+  CircularProgress,
 } from '@mui/material';
 import { fetch } from '../../../api/Fetch';
 import { useQuery } from '@tanstack/react-query';
-import { getShop, getShopDetail } from '../../../api/shopApi'
+import { getShopDetail } from '../../../api/shopApi';
+import Swal from 'sweetalert2';
+
 const BlogManagement = () => {
   const [blogs, setBlogs] = useState([]);
   const [openDialog, setOpenDialog] = useState(false);
   const [editingBlog, setEditingBlog] = useState(null);
-  const [notification, setNotification] = useState({ open: false, message: '' });
-  const {data} =  useQuery({
-    queryKey:['getShop-detail'],
+  const [errors, setErrors] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
+
+  const { data: shopData, isLoading: isLoadingShop } = useQuery({
+    queryKey: ['getShop-detail'],
     queryFn: getShopDetail,
-    retry: 1
-})
-  const fetchBlogs = async () => {
+    retry: 1,
+  });
+
+  const fetchBlogs = async (shopId) => {
     try {
-        console.log("data",data);
-      const response = await fetch.get('/blog/'+data.id);
+      setIsLoading(true);
+      const response = await fetch.get('/blog/' + shopId);
       setBlogs(response.data);
     } catch (error) {
       console.error('Error fetching blogs:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Lỗi',
+        text: 'Không thể tải danh sách blog',
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchBlogs();
-  }, []);
+    if (shopData?.id) {
+      fetchBlogs(shopData.id);
+    }
+  }, [shopData]);
+
+  const validateBlog = () => {
+    const newErrors = {};
+    
+    if (!editingBlog?.title?.trim()) {
+      newErrors.title = 'Vui lòng nhập tiêu đề blog';
+    } else if (editingBlog.title.length < 5) {
+      newErrors.title = 'Tiêu đề phải có ít nhất 5 ký tự';
+    }
+
+    if (!editingBlog?.content?.trim()) {
+      newErrors.content = 'Vui lòng nhập nội dung blog';
+    } else if (editingBlog.content.length < 10) {
+      newErrors.content = 'Nội dung phải có ít nhất 10 ký tự';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSave = async () => {
+    if (!validateBlog()) {
+      return;
+    }
+
     try {
       if (editingBlog?.id) {
         await fetch.put(`/blog/${editingBlog.id}`, editingBlog);
+        Swal.fire({
+          icon: 'success',
+          title: 'Thành công',
+          text: 'Cập nhật blog thành công!',
+          confirmButtonColor: '#28a745',
+        });
       } else {
         const newBlog = {
-            ...editingBlog,
-            shopId: data.id, // Thêm shopId vào dữ liệu blog
+          ...editingBlog,
+          shopId: shopData.id,
         };
         await fetch.post('/blog', newBlog);
+        Swal.fire({
+          icon: 'success',
+          title: 'Thành công',
+          text: 'Thêm blog mới thành công!',
+          confirmButtonColor: '#28a745',
+        });
       }
-      setNotification({ open: true, message: 'Lưu blog thành công!' });
-      fetchBlogs();
+      fetchBlogs(shopData.id);
       handleCloseDialog();
     } catch (error) {
       console.error('Error saving blog:', error);
-      setNotification({ open: true, message: 'Lưu blog thất bại!' });
+      Swal.fire({
+        icon: 'error',
+        title: 'Lỗi',
+        text: 'Không thể lưu blog. Vui lòng thử lại!',
+        confirmButtonColor: '#dc3545',
+      });
     }
   };
 
   const handleDelete = async (id) => {
     try {
-      await fetch.delete(`/blog/${id}`);
-      setNotification({ open: true, message: 'Xóa blog thành công!' });
-      fetchBlogs();
+      const result = await Swal.fire({
+        title: 'Xác nhận xóa',
+        text: 'Bạn có chắc chắn muốn xóa blog này?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc3545',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Xóa',
+        cancelButtonText: 'Hủy'
+      });
+
+      if (result.isConfirmed) {
+        try {
+          await fetch.delete(`/blog/${id}`);
+          Swal.fire({
+            icon: 'success',
+            title: 'Thành công',
+            text: 'Xóa blog thành công!',
+            confirmButtonColor: '#28a745',
+          });
+          fetchBlogs(shopData.id);
+        } catch (error) {
+          console.error('Error response:', error.response);
+          Swal.fire({
+            icon: 'error',
+            title: 'Lỗi',
+            text: error.response?.data?.message || 'Không thể xóa blog. Vui lòng thử lại!',
+            confirmButtonColor: '#dc3545',
+          });
+        }
+      }
     } catch (error) {
-      console.error('Error deleting blog:', error);
-      setNotification({ open: true, message: 'Xóa blog thất bại!' });
+      console.error('Error in delete operation:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Lỗi',
+        text: 'Có lỗi xảy ra trong quá trình xử lý. Vui lòng thử lại!',
+        confirmButtonColor: '#dc3545',
+      });
     }
   };
 
   const handleOpenDialog = (blog = {}) => {
     setEditingBlog(blog);
+    setErrors({});
     setOpenDialog(true);
   };
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
     setEditingBlog(null);
+    setErrors({});
   };
+
+  const handleInputChange = (field, value) => {
+    setEditingBlog({ ...editingBlog, [field]: value });
+    // Clear error when user types
+    if (errors[field]) {
+      setErrors({ ...errors, [field]: null });
+    }
+  };
+
+  if (isLoadingShop) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   return (
     <Box sx={{ p: 4 }}>
       <Typography variant="h4" mb={2}>Quản lý Blog</Typography>
       <Button variant="contained" color="primary" onClick={() => handleOpenDialog()}>Thêm Blog</Button>
       <Box mt={2}>
-        {blogs.map((blog) => (
-          <Card key={blog.id} sx={{ mb: 2 }}>
-            <CardContent>
-              <Typography variant="h6">{blog.title}</Typography>
-              <Typography variant="body2" color="text.secondary">{blog.content}</Typography>
-              <Box mt={2}>
-                <Button variant="outlined" onClick={() => handleOpenDialog(blog)}>Sửa</Button>
-                <Button variant="outlined" color="error" onClick={() => handleDelete(blog.id)} sx={{ ml: 2 }}>Xóa</Button>
-              </Box>
-            </CardContent>
-          </Card>
-        ))}
+        {isLoading ? (
+          <Box sx={{ display: 'flex', justifyContent: 'center', py: 3 }}>
+            <CircularProgress />
+          </Box>
+        ) : blogs.length === 0 ? (
+          <Typography variant="body1" sx={{ textAlign: 'center', py: 3 }}>
+            Chưa có bài blog nào
+          </Typography>
+        ) : (
+          blogs.map((blog) => (
+            <Card key={blog.id} sx={{ mb: 2 }}>
+              <CardContent>
+                <Typography variant="h6">{blog.title}</Typography>
+                <Typography variant="body2" color="text.secondary">{blog.content}</Typography>
+                <Box mt={2}>
+                  <Button variant="outlined" onClick={() => handleOpenDialog(blog)}>Sửa</Button>
+                  <Button variant="outlined" color="error" onClick={() => handleDelete(blog.id)} sx={{ ml: 2 }}>Xóa</Button>
+                </Box>
+              </CardContent>
+            </Card>
+          ))
+        )}
       </Box>
 
-      {/* Dialog */}
       <Dialog open={openDialog} onClose={handleCloseDialog} fullWidth maxWidth="sm">
         <DialogTitle>{editingBlog?.id ? 'Chỉnh sửa Blog' : 'Thêm Blog'}</DialogTitle>
         <DialogContent>
@@ -108,7 +221,10 @@ const BlogManagement = () => {
             fullWidth
             margin="normal"
             value={editingBlog?.title || ''}
-            onChange={(e) => setEditingBlog({ ...editingBlog, title: e.target.value })}
+            onChange={(e) => handleInputChange('title', e.target.value)}
+            error={!!errors.title}
+            helperText={errors.title}
+            required
           />
           <TextField
             label="Nội dung"
@@ -117,22 +233,19 @@ const BlogManagement = () => {
             rows={4}
             margin="normal"
             value={editingBlog?.content || ''}
-            onChange={(e) => setEditingBlog({ ...editingBlog, content: e.target.value })}
+            onChange={(e) => handleInputChange('content', e.target.value)}
+            error={!!errors.content}
+            helperText={errors.content}
+            required
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseDialog}>Hủy</Button>
-          <Button variant="contained" color="primary" onClick={handleSave}>Lưu</Button>
+          <Button onClick={handleCloseDialog} color="error">Hủy</Button>
+          <Button variant="contained" color="primary" onClick={handleSave}>
+            {editingBlog?.id ? 'Cập nhật' : 'Thêm mới'}
+          </Button>
         </DialogActions>
       </Dialog>
-
-      {/* Snackbar */}
-      <Snackbar
-        open={notification.open}
-        autoHideDuration={3000}
-        onClose={() => setNotification({ ...notification, open: false })}
-        message={notification.message}
-      />
     </Box>
   );
 };

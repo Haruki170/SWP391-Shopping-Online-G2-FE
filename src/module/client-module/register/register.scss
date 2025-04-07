@@ -1,3 +1,28 @@
+.customer-type {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  .customer-type-wrap {
+    display: flex;
+    gap: 20px;
+
+    .elem {
+      padding: 100px 50px;
+      border: 1px dashed;
+      border-radius: 20px;
+      cursor: pointer;
+      &:hover {
+        border: 1px solid;
+      }
+    }
+
+    .active {
+      border: 1px solid;
+    }
+  }
+}
+
 #sign-up {
   min-height: 120vh;
   position: relative;

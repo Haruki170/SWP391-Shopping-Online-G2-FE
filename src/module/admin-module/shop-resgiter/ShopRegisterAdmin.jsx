@@ -27,13 +27,33 @@ import ModalEmail from "./ModalEmail";
 import Swal from "sweetalert2";
 
 const ShopRegisterAdmin = () => {
-  const { data, isLoading,refetch } = useQuery({
+  const [page, setPage] = useState(1);
+  const PAGE_SIZE = 8;
+
+  const { data, isLoading, refetch } = useQuery({
     queryKey: ["shop-register-all"],
     queryFn: getAllRegister,
   });
 
   const [show, setShow] = useState(false);
   const [email, setEmail] = useState(null);
+
+  // Tính toán dữ liệu cho trang hiện tại
+  const getCurrentPageData = () => {
+    if (!data) return [];
+    const startIndex = (page - 1) * PAGE_SIZE;
+    const endIndex = startIndex + PAGE_SIZE;
+    return data.slice(startIndex, endIndex);
+  };
+
+  // Tính tổng số trang
+  const totalPages = data ? Math.ceil(data.length / PAGE_SIZE) : 0;
+
+  // Xử lý thay đổi trang
+  const handlePageChange = (event, value) => {
+    setPage(value);
+  };
+
   const handleShow = (email) => {
     setEmail(email);
     setShow(true);
@@ -129,8 +149,7 @@ const deleteRegister = (id) =>{
             </TableRow>
           </TableHead>
           <TableBody>
-            {data &&
-              data.map((row) => {
+            {getCurrentPageData().map((row) => {
                 let onlineState = "";
                 if (row.isOnline === 0) {
                   onlineState = "Có cửa hàng trực tiếp";
@@ -140,16 +159,16 @@ const deleteRegister = (id) =>{
                   onlineState = "Cả hai";
                 }
 
-                const isExpanded = expandedRow === row.id; // Kiểm tra xem hàng có được mở rộng hay không
+                const isExpanded = expandedRow === row.id;
 
                 return (
                   <React.Fragment key={row.id}>
                     <TableRow
                       sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                      style={{ cursor: "pointer" }} // Thay đổi con trỏ chuột khi di chuột qua hàng
+                      style={{ cursor: "pointer" }}
                     >
                       <TableCell component="th" scope="row">
-                        {row.id}
+                        {(page - 1) * PAGE_SIZE + data.indexOf(row) + 1}
                       </TableCell>
                       <TableCell>{row.name}</TableCell>
                       <TableCell>{row.customer.email}</TableCell>
@@ -263,11 +282,18 @@ const deleteRegister = (id) =>{
                     </TableRow>
                   </React.Fragment>
                 );
-              })}
+            })}
           </TableBody>
         </Table>
       </TableContainer>
-      <Pagination className="mt-4" count={10} color="primary" />
+      <div className="mt-4 d-flex justify-content-center">
+        <Pagination 
+          count={totalPages} 
+          page={page} 
+          onChange={handlePageChange} 
+          color="primary"
+        />
+      </div>
     </div>
   );
 };

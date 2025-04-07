@@ -17,12 +17,14 @@ import {
     TextField,
     IconButton,
     Stack,
+    CircularProgress,
 } from "@mui/material";
 import { styled } from "@mui/system";
-import { FaTicketAlt, FaPlus, FaRegCopy } from "react-icons/fa";
-import { getAllVoucher, insertVoucher } from "../../../api/voucherApi";
+import { FaTicketAlt, FaPlus, FaRegCopy, FaEdit, FaTrash } from "react-icons/fa";
+import { getAllVoucher, insertVoucher, updateVoucher, deleteVoucher } from "../../../api/voucherApi";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import Swal from 'sweetalert2';
+import { useQueryClient } from "@tanstack/react-query";
 
 const StyledCard = styled(Card)(({ theme }) => ({
     height: "100%",
@@ -47,7 +49,6 @@ const FloatingAddButton = styled(Button)({
 
 const VoucherList = () => {
     const [openDialog, setOpenDialog] = useState(false);
-    const [err, setErr] = useState(null);
     const [snackbar, setSnackbar] = useState({
         open: false,
         message: "",
@@ -59,57 +60,186 @@ const VoucherList = () => {
         minOrderAmount: "",
         startDate: "",
         endDate: "",
+        quantity: "",
         description: "",
     });
+    const [editingVoucher, setEditingVoucher] = useState(null);
+    const [errors, setErrors] = useState({});
 
-    const { data: vouchers = [], isLoading, refetch } = useQuery({
+    const { data: vouchers = [], isLoading } = useQuery({
         queryKey: ["vouchers"],
         queryFn: getAllVoucher,
     });
 
-    const { mutate: addVoucher } = useMutation({
-        mutationFn: (data) => insertVoucher(data),
-        onSuccess: () => {
-            refetch();
-            Swal.fire({
-                icon: "success",
-                title: "Thêm voucher thành công",
-                confirmButtonText: "Trở lại",
-                confirmButtonColor: "#28a745",
-            });
+    const queryClient = useQueryClient();
+
+    const handleInputChange = (field, value) => {
+        const targetVoucher = editingVoucher ? editingVoucher : newVoucher;
+        const setVoucher = editingVoucher ? setEditingVoucher : setNewVoucher;
+        
+        setVoucher({
+            ...targetVoucher,
+            [field]: value
+        });
+
+        if (errors[field]) {
+            setErrors({ ...errors, [field]: null });
+        }
+    };
+
+    const { mutate: saveVoucher } = useMutation({
+        mutationFn: async (voucher) => {
+            if (voucher.id) {
+                return updateVoucher(voucher.id, voucher);
+            } else {
+                return insertVoucher(voucher);
+            }
+        },
+        onSuccess: (_, variables) => {
+            queryClient.invalidateQueries(['vouchers']);
             setOpenDialog(false);
-            setNewVoucher({ code: "", discountAmount: "", endDate: "", description: "" });
+            setEditingVoucher(null);
+            setNewVoucher({
+                code: "",
+                discountAmount: "",
+                minOrderAmount: "",
+                startDate: "",
+                endDate: "",
+                quantity: "",
+                description: "",
+            });
+            Swal.fire({
+                icon: 'success',
+                title: 'Thành công',
+                text: variables.id ? 'Cập nhật voucher thành công!' : 'Thêm voucher mới thành công!',
+                confirmButtonColor: '#28a745',
+            });
         },
         onError: (error) => {
-            setErr(error.response.data.message);
-            console.log(error.response.data.message);
+            Swal.fire({
+                icon: 'error',
+                title: 'Lỗi',
+                text: error.response?.data?.message || 'Không thể lưu voucher. Vui lòng thử lại!',
+                confirmButtonColor: '#dc3545',
+            });
         }
     });
 
-    const handleAddVoucher = () => {
-        try {
-            if (!newVoucher.code || !newVoucher.discountAmount || !newVoucher.endDate || !newVoucher.startDate) {
-                throw new Error("Please fill in all required fields");
-            }
-
-            addVoucher(newVoucher);
-        } catch (error) {
-            setSnackbar({
-                open: true,
-                message: error.message,
-                severity: "error",
+    const { mutate: deleteVoucherMutation } = useMutation({
+        mutationFn: deleteVoucher,
+        onSuccess: () => {
+            queryClient.invalidateQueries(['vouchers']);
+            Swal.fire({
+                icon: 'success',
+                title: 'Thành công',
+                text: 'Xóa voucher thành công!',
+                confirmButtonColor: '#28a745',
+            });
+        },
+        onError: (error) => {
+            Swal.fire({
+                icon: 'error',
+                title: 'Lỗi',
+                text: error.response?.data?.message || 'Không thể xóa voucher. Vui lòng thử lại!',
+                confirmButtonColor: '#dc3545',
             });
         }
-    };
+    });
 
     const handleCopyCode = (code) => {
         navigator.clipboard.writeText(code);
         setSnackbar({
             open: true,
-            message: "Voucher code copied to clipboard!",
+            message: "Mã voucher đã được sao chép!",
             severity: "success",
         });
     };
+
+    const handleDelete = async (id) => {
+        const result = await Swal.fire({
+            title: 'Xác nhận xóa',
+            text: 'Bạn có chắc chắn muốn xóa voucher này?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc3545',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Xóa',
+            cancelButtonText: 'Hủy'
+        });
+
+        if (result.isConfirmed) {
+            deleteVoucherMutation(id);
+        }
+    };
+
+    const handleEdit = (voucher) => {
+        setEditingVoucher(voucher);
+        setOpenDialog(true);
+    };
+
+    const handleSave = () => {
+        const voucherToSave = editingVoucher || newVoucher;
+        if (!validateVoucher(voucherToSave)) {
+            return;
+        }
+        saveVoucher(voucherToSave);
+    };
+
+    const validateVoucher = (voucher) => {
+        const newErrors = {};
+        
+        if (!voucher.code?.trim()) {
+            newErrors.code = 'Vui lòng nhập mã voucher';
+        }
+
+        if (!voucher.discountAmount || voucher.discountAmount <= 0) {
+            newErrors.discountAmount = 'Giảm giá phải lớn hơn 0';
+        }
+
+        if (!voucher.quantity || voucher.quantity <= 0) {
+            newErrors.quantity = 'Số lượng phải lớn hơn 0';
+        }
+
+        if (!voucher.startDate) {
+            newErrors.startDate = 'Vui lòng chọn ngày bắt đầu';
+        }
+
+        if (!voucher.endDate) {
+            newErrors.endDate = 'Vui lòng chọn ngày kết thúc';
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
+    const isVoucherExpired = (endDate) => {
+        return new Date(endDate) < new Date();
+    };
+
+    const getVoucherStatus = (voucher) => {
+        const now = new Date();
+        const startDate = new Date(voucher.startDate);
+        const endDate = new Date(voucher.endDate);
+
+        if (now < startDate) {
+            return { label: 'Chưa bắt đầu', color: 'warning.main' };
+        } else if (now > endDate) {
+            return { label: 'Đã hết hạn', color: 'error.main' };
+        } else {
+            return { label: 'Đang hoạt động', color: 'success.main' };
+        }
+    };
+    const formatToMMDDYYYY = (dateString) => {
+        if (!dateString) return ""; // Handle null/undefined
+        return dateString.split('T')[0].split(' ')[0]; // Extracts "yyyy-MM-dd"
+      };
+    if (isLoading) {
+        return (
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+                <CircularProgress />
+            </Box>
+        );
+    }
 
     return (
         <Container maxWidth="lg" sx={{ py: 4 }} >
@@ -122,6 +252,22 @@ const VoucherList = () => {
                     <Grid item xs={12} sm={6} md={4} key={voucher.id}>
                         <StyledCard>
                             <CardContent>
+                                <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 1 }}>
+                                    <Typography
+                                        variant="caption"
+                                        sx={{
+                                            color: getVoucherStatus(voucher).color,
+                                            border: 1,
+                                            borderColor: getVoucherStatus(voucher).color,
+                                            borderRadius: 1,
+                                            px: 1,
+                                            py: 0.5,
+                                        }}
+                                    >
+                                        {getVoucherStatus(voucher).label}
+                                    </Typography>
+                                </Box>
+
                                 <Box
                                     sx={{
                                         display: "flex",
@@ -201,6 +347,31 @@ const VoucherList = () => {
                                         Ngày hết hạn: {new Date(voucher.endDate).toLocaleDateString()}
                                     </Typography>
                                 </Stack>
+
+                                {isVoucherExpired(voucher.endDate) && (
+                                    <Alert severity="error" sx={{ mb: 2 }}>
+                                        Voucher này đã hết hạn!
+                                    </Alert>
+                                )}
+
+                                <Box sx={{ mt: 2, display: 'flex', justifyContent: 'space-between' }}>
+                                    <Button
+                                        startIcon={<FaEdit />}
+                                        variant="outlined"
+                                        color="primary"
+                                        onClick={() => handleEdit(voucher)}
+                                    >
+                                        Sửa
+                                    </Button>
+                                    <Button
+                                        startIcon={<FaTrash />}
+                                        variant="outlined"
+                                        color="error"
+                                        onClick={() => handleDelete(voucher.id)}
+                                    >
+                                        Xóa
+                                    </Button>
+                                </Box>
                             </CardContent>
                         </StyledCard>
                     </Grid>
@@ -218,40 +389,48 @@ const VoucherList = () => {
 
             <Dialog
                 open={openDialog}
-                onClose={() => setOpenDialog(false)}
-                aria-labelledby="add-voucher-dialog"
+                onClose={() => {
+                    setOpenDialog(false);
+                    setEditingVoucher(null);
+                    setErrors({});
+                }}
+                aria-labelledby="voucher-dialog"
             >
-                <DialogTitle id="add-voucher-dialog">Thêm Voucher</DialogTitle>
+                <DialogTitle id="voucher-dialog">
+                    {editingVoucher ? 'Chỉnh sửa Voucher' : 'Thêm Voucher'}
+                </DialogTitle>
                 <DialogContent>
                     <TextField
                         autoFocus
                         margin="dense"
-                        label="Mã giảm giá"
+                        label="Mã voucher"
                         fullWidth
-                        value={newVoucher.code}
-                        onChange={(e) =>
-                            setNewVoucher({ ...newVoucher, code: e.target.value })
-                        }
+                        value={editingVoucher?.code || newVoucher.code}
+                        onChange={(e) => handleInputChange('code', e.target.value)}
+                        error={!!errors.code}
+                        helperText={errors.code}
                         required
                     />
                     <TextField
                         margin="dense"
-                        label="giảm giá"
+                        label="Giảm giá"
+                        type="number"
                         fullWidth
-                        value={newVoucher.discountAmount}
-                        onChange={(e) =>
-                            setNewVoucher({ ...newVoucher, discountAmount: e.target.value })
-                        }
+                        value={editingVoucher?.discountAmount || newVoucher.discountAmount}
+                        onChange={(e) => handleInputChange('discountAmount', e.target.value)}
+                        error={!!errors.discountAmount}
+                        helperText={errors.discountAmount}
                         required
                     />
                     <TextField
                         margin="dense"
                         label="đơn hàng tối thiểu"
+                        type="number"
                         fullWidth
-                        value={newVoucher.minOrderAmount}
-                        onChange={(e) =>
-                            setNewVoucher({ ...newVoucher, minOrderAmount: e.target.value })
-                        }
+                        value={editingVoucher?.minOrderAmount || newVoucher.minOrderAmount}
+                        onChange={(e) => handleInputChange('minOrderAmount', e.target.value)}
+                        error={!!errors.minOrderAmount}
+                        helperText={errors.minOrderAmount}
                         required
                     />
                     <TextField
@@ -260,10 +439,10 @@ const VoucherList = () => {
                         type="date"
                         fullWidth
                         InputLabelProps={{ shrink: true }}
-                        value={newVoucher.startDate}
-                        onChange={(e) =>
-                            setNewVoucher({ ...newVoucher, startDate: e.target.value })
-                        }
+                        value={formatToMMDDYYYY(editingVoucher?.startDate)|| newVoucher.startDate}
+                        onChange={(e) => handleInputChange('startDate', e.target.value)}
+                        error={!!errors.startDate}
+                        helperText={errors.startDate}
                         required
                     />
                     <TextField
@@ -272,20 +451,21 @@ const VoucherList = () => {
                         type="date"
                         fullWidth
                         InputLabelProps={{ shrink: true }}
-                        value={newVoucher.endDate}
-                        onChange={(e) =>
-                            setNewVoucher({ ...newVoucher, endDate: e.target.value })
-                        }
+                        value={formatToMMDDYYYY(editingVoucher?.endDate)|| newVoucher.endDate}
+                        onChange={(e) => handleInputChange('endDate', e.target.value)}
+                        error={!!errors.endDate}
+                        helperText={errors.endDate}
                         required
                     />
                     <TextField
                         margin="dense"
                         label="số lượng"
+                        type="number"
                         fullWidth
-                        value={newVoucher.quantity}
-                        onChange={(e) =>
-                            setNewVoucher({ ...newVoucher, quantity: e.target.value })
-                        }
+                        value={editingVoucher?.quantity || newVoucher.quantity}
+                        onChange={(e) => handleInputChange('quantity', e.target.value)}
+                        error={!!errors.quantity}
+                        helperText={errors.quantity}
                         required
                     />
                     <TextField
@@ -294,16 +474,20 @@ const VoucherList = () => {
                         fullWidth
                         multiline
                         rows={3}
-                        value={newVoucher.description}
-                        onChange={(e) =>
-                            setNewVoucher({ ...newVoucher, description: e.target.value })
-                        }
+                        value={editingVoucher?.description || newVoucher.description}
+                        onChange={(e) => handleInputChange('description', e.target.value)}
                     />
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={() => setOpenDialog(false)}>Cancel</Button>
-                    <Button onClick={handleAddVoucher} variant="contained">
-                        Add Voucher
+                    <Button onClick={() => {
+                        setOpenDialog(false);
+                        setEditingVoucher(null);
+                        setErrors({});
+                    }} color="error">
+                        Hủy
+                    </Button>
+                    <Button onClick={handleSave} variant="contained" color="primary">
+                        {editingVoucher ? 'Cập nhật' : 'Thêm mới'}
                     </Button>
                 </DialogActions>
             </Dialog>
@@ -321,7 +505,7 @@ const VoucherList = () => {
                     {snackbar.message}
                 </Alert>
             </Snackbar>
-        </Container >
+        </Container>
     );
 };
 

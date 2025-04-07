@@ -115,13 +115,7 @@ const ShopRegister = () => {
 
   return (
     <div id="shop-register">
-      <div className="shop-register-head">
-        <img
-          style={{ width: "100%" }}
-          src="https://lh3.googleusercontent.com/MYTcna3WwQeij_32S9leAhsOZTgARR6GyWVGSC6Lvc3tKUxvXMfbAR4g-QX09yqsU5kYDOO7suyPOiveZfM6EkaFHG9-VjzWHwxFC3qghLoBzb25qtURN-Rw9ZUVFlC3wQ=w1839"
-          alt=""
-        />
-      </div>
+
       <div className="shop-register-body">
         <h5>Bạn muốn mở gian hàng trên 6MEMs?</h5>
         <ul>

@@ -103,7 +103,7 @@ const ProductTable = ({ selectedCategories,selectedPriceRanges  }) => {
   // New function to handle status changes
   const handleChangeStatus = async (id, status) => {
     try {
-      const newStatus = status === 0 ? 1 : 0; // Toggle status (0 to 1, or 1 to 0)
+      const newStatus = status === 1 ? 2 : 1; // Toggle status (0 to 1, or 1 to 0)
       const response = await fetch.put(`/product/updateStatus`, null, {
         params: { productId: id, status: newStatus }
       });
@@ -227,9 +227,7 @@ const ProductTable = ({ selectedCategories,selectedPriceRanges  }) => {
               <Button onClick={() => navigate('/seller/add-product')} sx={{ backgroundColor: "#00b63e", color: "white", marginRight: 1 }}>
                 Thêm mới +
               </Button>
-              <Button onClick={() => console.log("Import clicked")} sx={{ backgroundColor: "#2196f3", color: "white", marginRight: 1 }}>
-                Import
-              </Button>
+
               <Button onClick={handleExport} sx={{ backgroundColor: "#ff9800", color: "white" }}>
                 Xuất file
               </Button>

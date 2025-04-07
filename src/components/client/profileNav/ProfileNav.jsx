@@ -100,7 +100,7 @@ const ProfileNav = () => {
             </li>
           </ul>
         </li>
-        <li>Thoát</li>
+        <li><NavLink to={"/"}>Thoát</NavLink></li>
       </ul>
     </div>
   );

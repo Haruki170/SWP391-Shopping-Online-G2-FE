@@ -135,7 +135,7 @@ const ResetPasswordAdmin = () => {
                         autoFocus
                         {...register("newPassword")}
                         error={!!errors.newPassword}
-                        helperText={errors.newPassword ? errors.email.message : ""}
+                        helperText={errors.newPassword ? errors.newPassword.message : ""}
                     />
                     <TextField
                         margin="normal"
@@ -148,7 +148,7 @@ const ResetPasswordAdmin = () => {
                         autoComplete="current-password"
                         {...register("confirmPassword")}
                         error={!!errors.confirmPassword}
-                        helperText={errors.confirmPassword ? errors.email.message : ""}
+                        helperText={errors.confirmPassword ? errors.confirmPassword.message : ""}
                     />
 
                     <Button

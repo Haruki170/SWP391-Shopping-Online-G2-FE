@@ -12,9 +12,14 @@ import Loading from "../../client-module/loading/Loading";
 import { getAllCustomers, updateCustomerManage, updateStatus } from "../../../api/customerApi";
 import { Form } from "react-bootstrap";
 import ModalEmail from "../shop-resgiter/ModalEmail";
+import Swal from 'sweetalert2';
+
 const TableCustomer = () => {
     const [show,setShow] = useState(false)
     const [email,setMail] = useState(null)
+    const [page, setPage] = useState(1);
+    const PAGE_SIZE = 8;
+    
     const handleMail = (email) =>{
         setMail(email)
         setShow(true)
@@ -23,10 +28,16 @@ const TableCustomer = () => {
     const [cusEdit, setCusEdit] = useState(null);
     const toggleForm = (customers) => {
         setIsOpen(!isOpen);
-        setCusEdit({
-            ...customers,
-            password: generatePassword()
-        });
+        if (customers) {
+            setCusEdit({
+                ...customers,
+                password: generatePassword()
+            });
+            setErr(null); // Reset error when opening form
+        } else {
+            setCusEdit(null);
+            setErr(null); // Reset error when closing form
+        }
     }
 
     const handleClose =() =>{
@@ -50,7 +61,21 @@ const TableCustomer = () => {
         queryKey: ['customers'],
         queryFn: getAllCustomers,
     })
-   
+
+    const handlePageChange = (event, value) => {
+        setPage(value);
+    };
+
+    // Tính toán dữ liệu cho trang hiện tại
+    const getCurrentPageData = () => {
+        if (!customers) return [];
+        const startIndex = (page - 1) * PAGE_SIZE;
+        const endIndex = startIndex + PAGE_SIZE;
+        return customers.slice(startIndex, endIndex);
+    };
+
+    // Tính tổng số trang
+    const totalPages = customers ? Math.ceil(customers.length / PAGE_SIZE) : 0;
 
     const [err, setErr] = useState(null);
 
@@ -77,28 +102,44 @@ const TableCustomer = () => {
         onSuccess: () => {
             queryClient.refetchQueries(["customers"]);
             setIsOpen(false);
+            Swal.fire({
+                icon: "success",
+                title: "Cập nhật thông tin thành công",
+                text: "Thông tin khách hàng đã được cập nhật",
+                confirmButtonText: "Đóng",
+                confirmButtonColor: "#28a745",
+            });
+            setErr(null);
         },
         onError: (err) => {
             console.log(err);
-            setErr(err.response.data.message);
+            Swal.fire({
+                icon: "error",
+                title: "Lỗi cập nhật",
+                text: err.response?.data?.message || "Không thể cập nhật thông tin khách hàng",
+                confirmButtonText: "Thử lại",
+                confirmButtonColor: "#dc3545",
+            });
+            setErr(err.response?.data?.message);
         }
     });
 
     const onsubmit = (e) => {
         e.preventDefault();
-        console.log(cusEdit);
-        if (cusEdit.email === "") {
-            setErr("Please enter email");
+        if (!cusEdit.email) {
+            setErr("Vui lòng nhập email");
             return;
         } else if (!cusEdit.email.match(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]+$/)) {
-            setErr("Please enter valid email");
+            setErr("Email không hợp lệ");
+            return;
+        } else if (!cusEdit.name) {
+            setErr("Vui lòng nhập tên người dùng");
             return;
         } else {
             setErr(null);
-            updateMutate(cusEdit); // Gọi hàm mutate để cập nhật dữ liệu
+            updateMutate(cusEdit);
         }
     };
-
 
     const handleChangeStatus = (id, newStatus) => {
         console.log(id, newStatus);
@@ -130,14 +171,14 @@ const TableCustomer = () => {
                         </TableHead>
                         <TableBody>
                             {
-                                customers.map((c, index) =>
+                                getCurrentPageData().map((c, index) =>
                                 (
                                     <TableRow
-                                        key={c.name}
+                                        key={c.id}
                                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                     >
                                         <TableCell component="th" scope="row">
-                                            {index + 1}
+                                            {(page - 1) * PAGE_SIZE + index + 1}
                                         </TableCell>
                                         <TableCell >{c.email}</TableCell>
                                         <TableCell >{c.name}</TableCell>
@@ -148,16 +189,54 @@ const TableCustomer = () => {
                                                 <div>
                                                     <Button variant="contained" color="success" onClick={() => toggleForm(c)}>chỉnh sửa</Button>
                                                     <Dialog open={isOpen} onClose={() => toggleForm(null)} fullWidth maxWidth="sm">
-                                                        <DialogTitle>chỉnh sửa thông tin khách hàng</DialogTitle>
+                                                        <DialogTitle>
+                                                            <Stack direction="row" justifyContent="space-between" alignItems="center">
+                                                                Chỉnh sửa thông tin khách hàng
+                                                                <Button onClick={() => toggleForm(null)} color="inherit" size="small">
+                                                                    ✕
+                                                                </Button>
+                                                            </Stack>
+                                                        </DialogTitle>
                                                         <DialogContent>
                                                             <Form onSubmit={onsubmit}>
-                                                                {err != null ? <Alert severity="error">{err}</Alert> : null}
-                                                                <TextField onChange={handleChange} value={cusEdit?.email} name='email' autoFocus margin="dense" label="Tên tài khoản" type="text" fullWidth />
-                                                                <TextField onChange={handleChange} value={cusEdit?.name} name='name' autoFocus margin="dense" label="Tên người dùng" type="text" fullWidth />
-                                                                <TextField value={cusEdit?.password} disabled autoFocus margin="dense" label="Mật khẩu" type="password" fullWidth />
+                                                                {err && <Alert severity="error" sx={{ mb: 2 }}>{err}</Alert>}
+                                                                <TextField 
+                                                                    onChange={handleChange} 
+                                                                    value={cusEdit?.email || ''} 
+                                                                    name='email' 
+                                                                    margin="dense" 
+                                                                    label="Email" 
+                                                                    type="email" 
+                                                                    fullWidth 
+                                                                    required
+                                                                    error={!!err && err.includes('email')}
+                                                                />
+                                                                <TextField 
+                                                                    onChange={handleChange} 
+                                                                    value={cusEdit?.name || ''} 
+                                                                    name='name' 
+                                                                    margin="dense" 
+                                                                    label="Tên người dùng" 
+                                                                    type="text" 
+                                                                    fullWidth 
+                                                                    required
+                                                                    error={!!err && err.includes('tên')}
+                                                                />
+                                                                <TextField 
+                                                                    value={cusEdit?.password || ''} 
+                                                                    disabled 
+                                                                    margin="dense" 
+                                                                    label="Mật khẩu" 
+                                                                    type="password" 
+                                                                    fullWidth 
+                                                                />
                                                                 <DialogActions>
-                                                                    <Button onClick={() => toggleForm(null)} color="primary">Hủy</Button>
-                                                                    <Button type='submit' color="primary">Gửi</Button>
+                                                                    <Button onClick={() => toggleForm(null)} color="error">
+                                                                        Hủy
+                                                                    </Button>
+                                                                    <Button type='submit' variant="contained" color="primary">
+                                                                        Cập nhật
+                                                                    </Button>
                                                                 </DialogActions>
                                                             </Form>
                                                         </DialogContent>
@@ -187,7 +266,14 @@ const TableCustomer = () => {
                         </TableBody>
                     </Table>
                 </TableContainer>
-                <Pagination className="mt-4" count={10} color="primary" />
+                <div className="mt-4 d-flex justify-content-center">
+                    <Pagination 
+                        count={totalPages} 
+                        page={page} 
+                        onChange={handlePageChange} 
+                        color="primary" 
+                    />
+                </div>
             </div>
         )
     }

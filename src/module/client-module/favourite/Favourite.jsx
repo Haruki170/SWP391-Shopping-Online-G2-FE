@@ -3,73 +3,35 @@ import {
   Alert,
   Box,
   Button,
-  ButtonGroup,
   Container,
   IconButton,
   Snackbar,
   Stack,
 } from "@mui/material";
 import Grid2 from "@mui/material/Grid2";
-
 import HomeIcon from "@mui/icons-material/Home";
-import List from "@mui/material/List";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
-import Collapse from "@mui/material/Collapse";
-import { useQuery } from "@tanstack/react-query";
-
-import ExpandLess from "@mui/icons-material/ExpandLess";
-import ExpandMore from "@mui/icons-material/ExpandMore";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
-
 import FavoriteIcon from "@mui/icons-material/Favorite";
-import LogoutIcon from "@mui/icons-material/Logout";
-import ReviewsIcon from "@mui/icons-material/Reviews";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import PersonIcon from "@mui/icons-material/Person";
 import ClearIcon from "@mui/icons-material/Clear";
-
 import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
-
 import Typography from "@mui/material/Typography";
-import { fetch } from "../../../api/Fetch";
-
+import { fetch } from "../../../api/Fetch"; // Giả sử fetch đã được cấu hình với token
 import ProfileNav from "../../../components/client/profileNav/ProfileNav";
 import { useNavigate } from "react-router-dom";
 
 function Favourite() {
-  const [openAccount, setOpenAccount] = React.useState(false);
-  const [openMyOrder, setOpenMyOrder] = React.useState(false);
   const [openSnackbarFav, setOpenSnackbarFav] = React.useState(false);
-
-  //temporary give the card shit
   const [products, setProducts] = React.useState([]);
-  const [product, setProduct] = React.useState(null);
-
-  // const { data, isLoading, refetch } = useQuery({
-  //   queryKey: ["favourite"],
-  //   queryFn: getFavourite,
-  // });
-
   const navigate = useNavigate();
 
   useEffect(() => {
     fetch.get(`/favourite/view-favourite`).then((data) => {
-      setProducts(data.data.data.favourite_items);
+      setProducts(data.data.data.favourite_items || []);
     });
   }, []);
-
-  const handleClick = () => {
-    setOpenAccount(!openAccount);
-  };
-
-  const handleClickOrder = () => {
-    setOpenMyOrder(!openMyOrder);
-  };
 
   const handleNavigateDetails = (id) => {
     navigate(`/product-detail/${id}`);
@@ -77,27 +39,16 @@ function Favourite() {
   };
 
   const handleDelete = (id) => {
-    const data = {
-      id: id, // Sử dụng ID của sản phẩm
-    };
-
-    console.log(
-      "CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC" +
-        id
-    );
+    const data = { id };
     fetch.put(`/favourite/delete-favourite`, data).then(() => {
-      // window.location.reload();
       setOpenSnackbarFav(true);
-
-      // alert("Xoa thanh cong");
+      setProducts(products.filter((product) => product.id !== id));
     });
   };
 
   const handleDeleteAll = () => {
     fetch.delete(`/favourite/delete-all-favourite`).then(() => {
-      window.location.reload();
-
-      // alert("Xoa thanh cong");
+      setProducts([]);
     });
   };
 
@@ -118,20 +69,18 @@ function Favourite() {
 
   return (
     <Box bgcolor={"#f3f3f3"}>
-      <Container bgcolor="red">
+      <Container>
         <Grid2 container py={5} spacing={5}>
           <Grid2 className="favourite" item size={{ xs: 12, md: 4 }}>
-            <ProfileNav></ProfileNav>
+            <ProfileNav />
           </Grid2>
 
-          {/* WISHLIST */}
-          <Grid2 item size={{ xs: 12, md: 8 }} xs={4}>
+          <Grid2 item size={{ xs: 12, md: 8 }}>
             <Box boxShadow={2} bgcolor={"white"} p={2}>
               <Typography sx={{ fontWeight: "bold" }} variant="h5">
                 YÊU THÍCH
               </Typography>
             </Box>
-            {/* PRODUCT */}
             <Grid2 container spacing={4} mt={5}>
               {products.map((product, index) => (
                 <Grid2 item xs={12} sm={6} md={4} key={index}>
@@ -160,7 +109,6 @@ function Favourite() {
                           ? `${product.product.name.substring(0, 20)}...`
                           : product.product.name}
                       </Typography>
-
                       <Typography
                         mt={2}
                         pb={1}
@@ -186,10 +134,7 @@ function Favourite() {
                           : product.product.description}
                       </Typography>
                       <Button
-                        type="submit"
-                        onClick={() =>
-                          handleNavigateDetails(product.product.id)
-                        }
+                        onClick={() => handleNavigateDetails(product.product.id)}
                         sx={{
                           mt: 2,
                           width: "100%",
@@ -207,13 +152,7 @@ function Favourite() {
               ))}
             </Grid2>
 
-            {/* CLEAR LIST CONTINUE SHOPPING J J DAY */}
-            <Stack
-              direction="row"
-              spacing={2}
-              justifyContent="flex-start"
-              mt={5}
-            >
+            <Stack direction="row" spacing={2} justifyContent="flex-start" mt={5}>
               <Button
                 sx={{ borderRadius: 20, bgcolor: "#bdc3c7" }}
                 variant="contained"

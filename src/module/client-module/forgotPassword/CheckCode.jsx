@@ -9,6 +9,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useMutation } from '@tanstack/react-query';
 import { changePasswordByCode, checkCode } from '../../../api/customerApi'; // Thêm import cho hàm changePasswordByCode
 import { useSelector } from 'react-redux';
+import Swal from 'sweetalert2'; // Thêm import Swal
 
 const CheckCode = () => {
     const email = useSelector(state => state.forgot.email);
@@ -45,19 +46,40 @@ const CheckCode = () => {
     });
 
     const { mutate } = useMutation({
-        mutationFn: (data) => checkCode(data.code), // Chỉ truyền mã xác thực
-        onSuccess: (data) => {
-            console.log("data", data);
-            navigate("/reset-password"); // Điều hướng đến trang đổi mật khẩu
+        mutationFn: (data) => checkCode({
+            code: data.code,
+            email: email
+        }),
+        onSuccess: (response) => {
+            Swal.fire({
+                icon: 'success',
+                title: 'Xác thực thành công',
+                text: response.message || 'Mã xác thực chính xác',
+                confirmButtonColor: '#28a745',
+            }).then(() => {
+                navigate("/reset-password");
+            });
         },
         onError: (error) => {
-            console.log("error", error);
-            alert("Mã xác thực không hợp lệ hoặc chưa được nhận."); // Thông báo lỗi cho người dùng
+            Swal.fire({
+                icon: 'error',
+                title: 'Xác thực thất bại',
+                text: error.response?.data?.message || 'Mã xác thực không hợp lệ',
+                confirmButtonColor: '#dc3545',
+            });
         }
     });
 
     const onSubmit = (data) => {
-        console.log("data", data);
+        if (!email) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Lỗi',
+                text: 'Không tìm thấy email. Vui lòng thực hiện lại từ đầu',
+                confirmButtonColor: '#dc3545',
+            });
+            return;
+        }
         mutate(data);
     }
 

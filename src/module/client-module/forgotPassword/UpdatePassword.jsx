@@ -10,7 +10,7 @@ import { useMutation } from '@tanstack/react-query';
 import { changePasswordByCode } from '../../../api/customerApi';
 import { useDispatch, useSelector } from 'react-redux';
 import { DELETE_EMAIL } from '../../../redux/slice/ForgotPasswordSlice';
-
+import Swal from "sweetalert2";
 const UpdatePassword = () => {
 
     const email = useSelector(state => state.forgot.email)

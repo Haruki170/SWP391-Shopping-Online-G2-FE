@@ -30,6 +30,9 @@ const ProductRow = ({ product, handleDeleteProduct, handleChangeStatus }) => {
     setValue(newValue);
   };
 
+  // Tính tổng số lượng từ tất cả các options
+  const totalQuantity = product.options.reduce((sum, option) => sum + option.quantity, 0);
+
   return (
     <>
       <TableRow>
@@ -55,13 +58,14 @@ const ProductRow = ({ product, handleDeleteProduct, handleChangeStatus }) => {
         </TableCell>
         <TableCell>{product.name}</TableCell>
         <TableCell>{product.price.toLocaleString()} đ</TableCell>
-        <TableCell>10</TableCell>
+        <TableCell width={"10%"}>{totalQuantity}</TableCell>
         <TableCell>
           <Stack direction={"row"} spacing={2}>
             <Button
               onClick={() => navigate("/seller/update-product/" + product.id)}
               variant="outlined"
               color="success"
+              disabled={product.status !== 1}
             >
               Cập nhật
             </Button>
@@ -202,7 +206,7 @@ const ProductRow = ({ product, handleDeleteProduct, handleChangeStatus }) => {
                         color={product.status !== 0 ? "success" : "error"}
                         variant="outlined"
                       >
-                        {product.status == 0 && "Sản phẩm mới"}
+                        {product.status == 0 && "Chờ duyệt"}
                         {product.status == 1 && "Đang hoạt động"}
                         {product.status == 2 && "Ngừng kinh doanh"}
                         {product.status == 3 && "Bị từ chối"}
@@ -216,16 +220,13 @@ const ProductRow = ({ product, handleDeleteProduct, handleChangeStatus }) => {
                     >
                       {product.status !== 0 && product.status !== 3 ? (
                         <Button
-                          onClick={() =>
-                            handleChangeStatus(product.id, product.status)
-                          }
-                          color={product.status !== 0 ? "error" : "success"}
-                          variant="contained"
-                        >
-                          {product.status !== 0
-                            ? "Ngừng kinh doanh"
-                            : "Hoạt động trở lại"}
-                        </Button>
+                        onClick={() => handleChangeStatus(product.id, product.status)}
+                        color={product.status === 1 ? "error" : "success"}
+                        variant="contained"
+                        disabled={product.status === 0 || product.status === 3} // Disable for pending/rejected
+                      >
+                        {product.status === 1 ? "Ngừng kinh doanh" : "Hoạt động trở lại"}
+                      </Button>
                       ) : (
                         ""
                       )}

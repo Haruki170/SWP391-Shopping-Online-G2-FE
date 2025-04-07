@@ -109,7 +109,7 @@ const FeedBack = ({ id }) => {
 
   return (
     <div id="feedback">
-      {error && <Typography color="error">Error: {error}</Typography>}
+
       <div className="feedback-head">
         <Box
           sx={{

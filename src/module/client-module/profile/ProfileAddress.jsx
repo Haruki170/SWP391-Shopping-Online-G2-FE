@@ -39,6 +39,7 @@ const ProfileAddress = () => {
   let [show, setShow] = useState(false);
   let [showUpdate, setShowUpdate] = useState(false)
   let [selectUpdate,setSelectUpdate] = useState(null)
+  console.log(selectUpdate)
   const openModal = () => {
     setShow(true);
   };

@@ -6,7 +6,8 @@ import { Container } from "react-bootstrap";
 import Loading from "../loading/Loading";
 
 const Product = ({ products }) => {
-  const [filterProduct, setFilterProduct] = useState(products);
+  console.log("pro",products)
+  const [filterProduct, setFilterProduct] = useState(products || []);
   const [isDelayedLoading, setIsDelayedLoading] = useState(true);
 
   useEffect(() => {
@@ -14,7 +15,9 @@ const Product = ({ products }) => {
     window.scrollTo(0, 0);
 
     // Cập nhật filterProduct khi products thay đổi
-    setFilterProduct(products);
+    if (products) {
+      setFilterProduct(products);
+    }
 
     // Thiết lập trạng thái loading với timeout
     setIsDelayedLoading(true);
