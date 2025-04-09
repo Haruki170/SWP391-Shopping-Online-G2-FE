@@ -53,64 +53,7 @@ const BlogManagement = () => {
     }
   }, [shopData]);
 
-  const validateBlog = () => {
-    const newErrors = {};
-    
-    if (!editingBlog?.title?.trim()) {
-      newErrors.title = 'Vui lòng nhập tiêu đề blog';
-    } else if (editingBlog.title.length < 5) {
-      newErrors.title = 'Tiêu đề phải có ít nhất 5 ký tự';
-    }
-
-    if (!editingBlog?.content?.trim()) {
-      newErrors.content = 'Vui lòng nhập nội dung blog';
-    } else if (editingBlog.content.length < 10) {
-      newErrors.content = 'Nội dung phải có ít nhất 10 ký tự';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSave = async () => {
-    if (!validateBlog()) {
-      return;
-    }
-
-    try {
-      if (editingBlog?.id) {
-        await fetch.put(`/blog/${editingBlog.id}`, editingBlog);
-        Swal.fire({
-          icon: 'success',
-          title: 'Thành công',
-          text: 'Cập nhật blog thành công!',
-          confirmButtonColor: '#28a745',
-        });
-      } else {
-        const newBlog = {
-          ...editingBlog,
-          shopId: shopData.id,
-        };
-        await fetch.post('/blog', newBlog);
-        Swal.fire({
-          icon: 'success',
-          title: 'Thành công',
-          text: 'Thêm blog mới thành công!',
-          confirmButtonColor: '#28a745',
-        });
-      }
-      fetchBlogs(shopData.id);
-      handleCloseDialog();
-    } catch (error) {
-      console.error('Error saving blog:', error);
-      Swal.fire({
-        icon: 'error',
-        title: 'Lỗi',
-        text: 'Không thể lưu blog. Vui lòng thử lại!',
-        confirmButtonColor: '#dc3545',
-      });
-    }
-  };
+  
 
   const handleDelete = async (id) => {
     try {
